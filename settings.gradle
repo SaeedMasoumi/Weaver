@@ -1,0 +1,4 @@
+rootProject.name = 'Weaver'
+include 'weaver-processor'
+include 'weaver-plugin'
+

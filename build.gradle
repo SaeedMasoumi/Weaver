@@ -1,0 +1,20 @@
+group "io.saeid.weaver"
+version "1.0-SNAPSHOT"
+
+subprojects { subProject ->
+    group "io.saeid.weaver"
+    version "1.0-SNAPSHOT"
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    apply plugin: 'java'
+    apply from: rootProject.file('gradle/dependencies.gradle')
+
+    sourceCompatibility = 1.7
+    afterEvaluate { project ->
+            configurations.compile.each { File file -> println file.name }
+    }
+}

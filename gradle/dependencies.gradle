@@ -1,0 +1,7 @@
+ext.deps = [
+        javassist          : "org.javassist:javassist:3.20.0-GA",
+        junit              : "junit:junit:4.11",
+        android            : "com.android.tools.build:gradle:2.1.0-alpha5",
+        groovyAndroidPlugin: "org.codehaus.groovy:gradle-groovy-android-plugin:0.3.8",
+        easyMock           : "org.easymock:easymock:3.4"
+]
