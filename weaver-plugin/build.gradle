@@ -1,5 +1,5 @@
 apply plugin: 'groovy'
-
+apply plugin: 'maven'
 sourceSets {
     main {
         java { srcDirs = [] }    // no source dirs for the java compiler
@@ -14,3 +14,4 @@ dependencies {
     testCompile deps.android
     testCompile deps.groovyAndroidPlugin
 }
+

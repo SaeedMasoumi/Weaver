@@ -3,7 +3,7 @@ package weaver.plugin
 /**
  * PluginType that has been applied to current module.
  * <p>
- * Currently we only support android application, android library and plain java modules.
+ * Currently we only support android application, android library and plain java projects.
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 enum PluginType {
