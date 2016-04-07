@@ -3,8 +3,7 @@ package weaver.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
-
-import java.lang.reflect.Method
+import weaver.plugin.task.ClassLoaderTask
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -12,34 +11,26 @@ import java.lang.reflect.Method
 
 class WeaverPlugin implements Plugin<Project> {
 
+    static final WEAVER_CLASSLOADER_TASK = "weaverClassLoader"
+
     @Override
     void apply(Project project) {
         //First find the type of current project.
         PluginType pluginType = findPluginType { String it -> project.plugins.findPlugin(it) }
         //Add weaver configuration
-        project.configurations.create("weaver").extendsFrom(project.configurations.compile)
+        project.configurations.create("weaver")
         //Add weaver extension
         project.extensions.create('weaver', WeaverExtension)
+        //Add needed tasks
+        addTasks project
 
         project.afterEvaluate {
-            Set<File> jarFiles = project.configurations.weaver.files
-            println jarFiles
-            File propFile = project.zipTree(jarFiles.getAt(0)).matching {
-                include 'META-INF/weaver.properties'
-            }.singleFile
-//
-//            propFile.readLines().forEach {
-//                String className = it
-//                URL url = jarFile.toURI().toURL();
-//                URL[] urls = [url]
-//                ClassLoader classLoader = new URLClassLoader(urls);
-//                Class<?> instanceClass = classLoader.loadClass(className)
-//                Object instance = instanceClass.newInstance()
-//                Method method = instanceClass.getDeclaredMethod("doStuff")
-//                method.invoke(instance)
-//                println(instance)
-//            }
+            project.tasks.getByName(WEAVER_CLASSLOADER_TASK).execute()
         }
+    }
+
+    static void addTasks(Project project) {
+        project.task(WEAVER_CLASSLOADER_TASK, type: ClassLoaderTask)
     }
 
     private static PluginType findPluginType(Closure hasPlugin) {

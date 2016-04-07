@@ -22,11 +22,15 @@ class WeaverConfigurationTest {
             maven {
                 url localMaven
             }
+            maven {
+                url  "http://dl.bintray.com/lukar1203/maven"
+            }
             jcenter()
             mavenCentral()
         }
         project.dependencies {
-            weaver "io.reactivex:rxjava:1.0.11"
+            weaver "io.reactivex:rxjava:1.0.12"
+            weaver 'com.android.support:appcompat-v7:21.0.3'
             weaver "com.google.dagger:dagger:2.2"
         }
         project.evaluate()
