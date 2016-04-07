@@ -3,15 +3,15 @@ package weaver.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
-import weaver.plugin.task.ClassLoaderTask
+import weaver.plugin.task.PreLoaderTask
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-
 class WeaverPlugin implements Plugin<Project> {
 
-    static final WEAVER_CLASSLOADER_TASK = "weaverClassLoader"
+    static final WEAVER_PRE_LOADER_TASK = "weaverPreLoader"
+    static final WEAVER_TRANSFORMER_TASK = "weaverTransformer"
 
     @Override
     void apply(Project project) {
@@ -25,12 +25,12 @@ class WeaverPlugin implements Plugin<Project> {
         addTasks project
 
         project.afterEvaluate {
-            project.tasks.getByName(WEAVER_CLASSLOADER_TASK).execute()
+            project.tasks.getByName(WEAVER_PRE_LOADER_TASK).execute()
         }
     }
 
     static void addTasks(Project project) {
-        project.task(WEAVER_CLASSLOADER_TASK, type: ClassLoaderTask)
+        project.task(WEAVER_PRE_LOADER_TASK, type: PreLoaderTask)
     }
 
     private static PluginType findPluginType(Closure hasPlugin) {
