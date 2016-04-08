@@ -1,0 +1,55 @@
+apply plugin: 'com.bmuschko.nexus'
+
+ext {
+    projectName = ''
+    projectDescription = ''
+}
+
+modifyPom {
+    project {
+        name projectName
+        description projectDescription
+        url 'https://github.com/SaeedMasoumi/Weaver'
+        inceptionYear '2016'
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'SaeedMasoumi'
+                name 'Saeed Masoumi'
+                email 's-masoumi@live.com'
+            }
+        }
+    }
+}
+
+task deploySnapshots {
+    def ourSlug = "SaeedMasoumi/Weaver"
+    def travisSlug = System.getenv("TRAVIS_REPO_SLUG")
+    if (travisSlug) {
+        if (!ourSlug.equals(travisSlug)) {
+            throw new RuntimeException("Skipping snapshot deployment:  Expected '$ourSlug' but was '$travisSlug'.")
+        }
+        if (!VERSION.endsWith("-SNAPSHOT")) {
+            throw new RuntimeException("$project.name version should contains snapshot")
+        }
+        def nexusUserName = System.getenv("NEXUS_USERNAME")
+        def nexusPassword = System.getenv("NEXUS_PASSWORD")
+        if (!nexusUserName && !nexusPassword) {
+            throw new RuntimeException("Username or/and password variables are not set")
+        }
+        setProperty("nexusUsername", nexusUserName)
+        setProperty("nexusPassword", nexusPassword)
+    }
+    //otherwise ignore that because we are not on travis
+}
+
+uploadArchives.dependsOn deploySnapshots
+

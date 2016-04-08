@@ -1,4 +1,7 @@
+projectName = 'Weaver Processor'
+projectDescription = 'Weaver processor library.'
 
 dependencies {
     compile deps.javassist
 }
+

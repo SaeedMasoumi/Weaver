@@ -1,0 +1,23 @@
+language: groovy
+
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+
+env:
+  global:
+    - secure: "pPa8+T96ehzQUzhhS31NSkG8y9kydhB4m2PxJrNsWi7gzpFNNWto+IQeOoFMKnHgja56A/lPAz5lycPezkZveD+57f+AtQb3Wk09QV+Ks/6h/FOeOZb+VJE+71msTDte344VjRW3NDnWhgq06UAD+h6fjCpQ0CP1BCrE8OQ/MTG2kZJr0a9RdsxukRniA9w4NKg97UbzN2b5uhqDVn6z56fKaJ4xhwOP/JlNO/154lk3bCJrLknn3IDuLYPvxTv2BDIbm0e8Kn5nlxXgIoXbRg7RUjW8KOdDmVCC3zpM3YH5JxrM03ORO9/Nm9941l8pyxqgSwXXxa+kn4xYeGvs3Cf3oFMqoewKE7VCUleLUQo5DAWHmcYdH/aU90rjvCFWzh6ab9+v0EOdbNxIIePtAfuObxfWkdSLG48pNHEaelG3DtCa6MWDMcZCb6Gagm7F3gQgIzvJ0gHUp1WYuoWfoRHruSvH+LlvDNDuHrjECADqXuOAK1lv/IshAtM/ut6aZOIxXTZpZca/Xw0bXPtKLzkOgO6Sz5/Yu/pbIft93r+TYbDi9QHmXSATYai2sRGZjKw8hek2U+fTq9ey9HvcLocEkFFTQGmkowH07aEHmq80AElWiwIrd4iGPXWyAQCFBCPWPBzBH+3sy99plPZJdPhi310CUMFVubV4Bgvzvto="
+    - secure: "PWFmlzukDQhnmsTVvEOoJp3tSrGrzN8Thoz9WG20VhNF0fFZaUb1BsLgsi8DLjxF/Mpj9d922F3LQe7bW3v3BPL+IViId+iwkzq3acx9/pr6x0BieDOg6MKah6mZqfFHkCj5YPkNTLhYBhbVEpiWm2K9OW4/WkeTBw+5uSbc/vgScSmo4Le62cT0cqsqApbTRjllCC3jRu4orUkCe8Hh8DtnjcLRRQdcI2GwVJuAPjkBtzw5PXyD0BrxCdLas6SIx610M9VgSFWfU8jBPvELOAMOrkB9xN2yDGVX3p0Qg6Kv/NkFDGOacV1mf8+ugzBuAxUIBSeDECVObihsLZ0CEVssv95gAVPWPeHGwnaUEcGp+VPdJiJ8g4JNFUtr1EkAPUBd4OtS7ZnQztfClRUAjH/qpuS607E2RXMr382hMtjCXTcmTnyJ0bjBAu4sXDXo5wHEgcnjcnf4TxNELauCS8CaT9Qd3VMNzzKX52kywhvp6SDkUbFZ9AM4STUfJ4zye8xJCp69jV5tt8f2dpIaK6D1gmdM3Yc7Mxd/ZpXYoqyHSm1Z5Rvf2NF2PyuZe0W/KTEz8+xg0nvR6pLgiiitaH7ZE5MYVrzM8AgR0xKwB8hPi09VpBi3VmtM51qeXEM7w1IkfMZxNGTlq3Cs3W0m4+HIE6ZBkZl383lVqNnBBOg="
+
+cache:
+  directories:
+    - $HOME/.gradle
+
+script:
+  -  ./gradlew assemble --info
+
+after_success:
+  - ./gradlew uploadArchives
+
+notifications:
+  email: false

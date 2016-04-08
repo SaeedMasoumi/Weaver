@@ -1,9 +1,13 @@
-group "io.saeid.weaver"
-version "1.0-SNAPSHOT"
+plugins {
+    id "com.bmuschko.nexus" version "2.3.1"
+}
+
+group GROUP
+version VERSION
 
 subprojects { subProject ->
-    group "io.saeid.weaver"
-    version "1.0-SNAPSHOT"
+    group GROUP
+    version VERSION
 
     repositories {
         mavenCentral()
@@ -15,6 +19,7 @@ subprojects { subProject ->
 
     apply plugin: 'java'
     apply from: rootProject.file('gradle/dependencies.gradle')
+    apply from: rootProject.file('gradle/push-artifacts.gradle')
 
     sourceCompatibility = 1.7
 }

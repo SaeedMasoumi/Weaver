@@ -1,7 +1,4 @@
 package weaver.plugin.classloader
-
-import weaver.processor.WeaverProcessor
-
 /**
  * Includes
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -10,7 +7,7 @@ import weaver.processor.WeaverProcessor
 class WeaverClassLoader {
 
     private ClassLoader classLoader;
-    private WeaverProcessor[] processors
+    private ArrayList<String> processorsClassName
 
     public void loadJars(Set<File> jarFiles) {
         if (jarFiles) {
@@ -21,7 +18,12 @@ class WeaverClassLoader {
         }
     }
 
-    public URLClassLoader getClassLoader() {
+    public ClassLoader getClassLoader() {
         return classLoader
     }
+
+    public void setWeaverProcessors(ArrayList<String> classNames) {
+        processorsClassName = classNames
+    }
+
 }

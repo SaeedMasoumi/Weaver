@@ -1,5 +1,7 @@
+projectName = 'Weaver Gradle Plugin'
+projectDescription = 'Gradle plugin that provides bytecode manipulation.'
+
 apply plugin: 'groovy'
-apply plugin: 'maven'
 
 sourceSets {
     main {

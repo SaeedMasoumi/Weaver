@@ -21,7 +21,9 @@ class PreLoaderTask extends DefaultTask {
     def resolveDependencies() {
         Set<File> jarFiles = getAllJarFiles()
         WeaverClassLoader.instance.loadJars(jarFiles)
-        println getAllProcessorsName(jarFiles)
+        ArrayList<String> processorsClassName = getAllProcessorsName(jarFiles)
+        println processorsClassName
+        WeaverClassLoader.instance.setWeaverProcessors(processorsClassName)
     }
 
     /**
@@ -52,16 +54,18 @@ class PreLoaderTask extends DefaultTask {
     def getAllProcessorsName(Set<File> jarFiles) {
         def weaverProcessors = []
         jarFiles.forEach {
-            File propFile = project.zipTree(it).matching {
+            def zipTree = project.zipTree(it).matching {
                 include PROCESSORS_PROP
-            }.singleFile
-
-            if (propFile) {
-                Properties props = new Properties()
-                propFile.withInputStream {
-                    props.load(it)
+            }
+            if (zipTree.files) {
+                File propFile = zipTree.singleFile
+                if (propFile) {
+                    Properties props = new Properties()
+                    propFile.withInputStream {
+                        props.load(it)
+                    }
+                    weaverProcessors.addAll(props.getProperty("weaverProcessors").split(",").collect())
                 }
-                weaverProcessors.addAll(props.getProperty("weaverProcessors").split(",").collect())
             }
 
         }
