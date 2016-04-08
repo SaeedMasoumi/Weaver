@@ -2,14 +2,13 @@ package weaver.plugin.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
-import weaver.plugin.classloader.WeaverClassLoader
+import weaver.plugin.internal.classloader.WeaverClassLoader
 
 /**
- * Before transforming classes, weaver plugin needs to know {@link weaver.processor.WeaverProcessor}
- * classes, So this task prepares them by loading all classes and resources from .jar/.aar files
- * that has been notated with 'weaver' scope in dependencies.
- * <p>
- * With this approach, weaver plugin has access to these processors at runtime.
+ * Before transforming classes, {@code WeaverClassLoader} must be initialized because weaver plugin
+ * needs to know {@link weaver.processor.WeaverProcessor} classes, So this task prepares them
+ * by loading all classes and resources from .jar/.aar files that has been notated with 'weaver'
+ * scope in dependencies.
  *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
@@ -22,7 +21,6 @@ class PreLoaderTask extends DefaultTask {
         Set<File> jarFiles = getAllJarFiles()
         WeaverClassLoader.instance.loadJars(jarFiles)
         ArrayList<String> processorsClassName = getAllProcessorsName(jarFiles)
-        println processorsClassName
         WeaverClassLoader.instance.setWeaverProcessors(processorsClassName)
     }
 

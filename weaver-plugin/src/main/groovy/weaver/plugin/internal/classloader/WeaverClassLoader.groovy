@@ -1,4 +1,4 @@
-package weaver.plugin.classloader
+package weaver.plugin.internal.classloader
 /**
  * Includes
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -7,7 +7,7 @@ package weaver.plugin.classloader
 class WeaverClassLoader {
 
     private ClassLoader classLoader;
-    private ArrayList<String> processorsClassName
+    private ArrayList<String> processorsClassNameس
 
     public void loadJars(Set<File> jarFiles) {
         if (jarFiles) {
@@ -23,7 +23,7 @@ class WeaverClassLoader {
     }
 
     public void setWeaverProcessors(ArrayList<String> classNames) {
-        processorsClassName = classNames
+        processorsClassNameس = classNames
     }
 
 }

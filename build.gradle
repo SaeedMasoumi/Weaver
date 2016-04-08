@@ -12,8 +12,8 @@ subprojects { subProject ->
     repositories {
         mavenCentral()
         jcenter()
-        maven {
-            url uri('localmaven')
+        repositories {
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         }
     }
 
