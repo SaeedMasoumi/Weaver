@@ -2,6 +2,7 @@ package weaver.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
+import weaver.plugin.task.AndroidTransformerTask
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -9,21 +10,22 @@ import org.gradle.api.ProjectConfigurationException
 
 class WeaverAndroidPlugin extends WeaverPlugin {
 
+    static final TRANSFORMER_TASK = "weaverAndroid"
 
     @Override
     void apply(Project project) {
         super.apply(project)
         project.afterEvaluate {
             def variants = getVariants { String name -> project.plugins.findPlugin(name) }
-            def preLoaderAdded = false
             project.android[variants].all { variant ->
-
-                if (!preLoaderAdded) {
-                    variant.javaCompiler.doLast{
-                        getPreLoaderTask(project).execute()
-                    }
-                    preLoaderAdded = true
+                //TODO check whether variant has been rejected or not
+                def taskName = "$TRANSFORMER_TASK$variant.name"
+                project.task(taskName, type: AndroidTransformerTask)
+                variant.javaCompiler.doLast {
+                    getTask(project, taskName).execute()
                 }
+                project.logger.quiet("Task $taskName added after $variant.javaCompiler.name")
+                getTask(project, taskName).mustRunAfter variant.javaCompiler
             }
         }
     }

@@ -17,7 +17,7 @@ class WeaverConfigurationTest {
         Project project = ProjectBuilder.builder().build()
         project.file(".").mkdir();
         project.apply plugin: 'java'
-        project.apply plugin: 'weaver'
+        project.apply plugin: 'weaver-android'
         project.repositories {
             maven {
                 url localMaven
@@ -29,9 +29,9 @@ class WeaverConfigurationTest {
             mavenCentral()
         }
         project.dependencies {
-            weaver "io.reactivex:rxjava:1.0.12"
-            weaver 'com.android.support:appcompat-v7:21.0.3'
-            weaver "com.google.dagger:dagger:2.2"
+//            weaver "io.reactivex:rxjava:1.0.12"
+//            weaver 'com.android.support:appcompat-v7:21.0.3'
+//            weaver "com.google.dagger:dagger:2.2"
         }
         project.evaluate()
     }

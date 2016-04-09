@@ -2,15 +2,11 @@ package weaver.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import weaver.plugin.task.PreLoaderTask
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 class WeaverPlugin implements Plugin<Project> {
-
-    static final WEAVER_PRE_LOADER_TASK = "weaverPreLoader"
-    static final WEAVER_TRANSFORMER_TASK = "weaverTransformer"
 
     @Override
     void apply(Project project) {
@@ -18,14 +14,13 @@ class WeaverPlugin implements Plugin<Project> {
         project.configurations.create("weaver")
         //Add weaver extension
         project.extensions.create('weaver', WeaverExtension)
-        addTasks project
     }
 
-    private void addTasks(Project project) {
-        project.task(WEAVER_PRE_LOADER_TASK, type: PreLoaderTask)
+    static addTask(Project project, String name, def type) {
+        project.task(name, type: type)
     }
 
-    protected def getPreLoaderTask(Project project) {
-        return project.tasks.getByName(WEAVER_PRE_LOADER_TASK)
+    static getTask(Project project, String name) {
+        return project.tasks.getByName(name)
     }
 }
