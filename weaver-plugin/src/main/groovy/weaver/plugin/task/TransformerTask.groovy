@@ -1,7 +1,9 @@
 package weaver.plugin.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.compile.JavaCompile
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -10,7 +12,11 @@ abstract class TransformerTask extends DefaultTask {
 
     static final PROCESSORS_PROP = "/META-INF/weaver/processors.properties"
 
+    private JavaCompile javaCompile
+    private FileCollection classPath
+
     private ClassLoader cl
+    private ArrayList processorsClassNames
 
     @TaskAction
     def doTransform() {
@@ -28,8 +34,7 @@ abstract class TransformerTask extends DefaultTask {
     def loadClassLoader() {
         Set<File> jarFiles = getAllJarFiles()
         loadJars(jarFiles)
-        ArrayList<String> processorsClassName = getAllProcessorsName(jarFiles)
-        project.logger.info("JarFiles has been loaded {$jarFiles}, Weaver Processors has been loaded {$processorsClassName")
+        processorsClassNames = getAllProcessorsName(jarFiles)
     }
 
     abstract def transform()
@@ -60,6 +65,9 @@ abstract class TransformerTask extends DefaultTask {
         if (jarFiles) {
             def urls = jarFiles.collect() { it.toURI().toURL() }
             cl = new URLClassLoader(urls as URL[])
+            jarFiles.forEach {
+                project.logger.quiet("$name Task: $it.name has been added to classloader")
+            }
         } else {
             cl = new URLClassLoader()
         }
@@ -86,6 +94,22 @@ abstract class TransformerTask extends DefaultTask {
 
         }
         return weaverProcessors
+    }
+
+    public void setClassPathFileCollection(FileCollection classPathFileCollection) {
+        this.classPath = classPathFileCollection
+    }
+
+    FileCollection getClassPathFileCollection() {
+        return classPath
+    }
+
+    public void setJavaCompile(JavaCompile javaCompile) {
+        this.javaCompile = javaCompile
+    }
+
+    JavaCompile getJavaCompile() {
+        return javaCompile
     }
 
     protected ClassLoader getClassLoader() {

@@ -1,14 +1,17 @@
 package weaver.plugin
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.compile.JavaCompile
 import weaver.plugin.task.AndroidTransformerTask
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 
-class WeaverAndroidPlugin extends WeaverPlugin {
+class WeaverPluginAndroid implements Plugin<Project> {
 
     static final TRANSFORMER_TASK = "weaverAndroid"
 
@@ -19,13 +22,16 @@ class WeaverAndroidPlugin extends WeaverPlugin {
             def variants = getVariants { String name -> project.plugins.findPlugin(name) }
             project.android[variants].all { variant ->
                 //TODO check whether variant has been rejected or not
-                def taskName = "$TRANSFORMER_TASK$variant.name"
-                project.task(taskName, type: AndroidTransformerTask)
-                variant.javaCompiler.doLast {
-                    getTask(project, taskName).execute()
+                def taskName = "$TRANSFORMER_TASK${variant.name.capitalize()}"
+                JavaCompile androidJavaCompile = variant.javaCompile
+                FileCollection classpathFileCollection = project.files(project.android.bootClasspath)
+                classpathFileCollection += androidJavaCompile.classpath
+
+                def transformerTask = project.task(taskName, type: AndroidTransformerTask) {
+                    javaCompile = androidJavaCompile
+                    classPath = classpathFileCollection
                 }
-                project.logger.quiet("Task $taskName added after $variant.javaCompiler.name")
-                getTask(project, taskName).mustRunAfter variant.javaCompiler
+                transformerTask.mustRunAfter androidJavaCompile
             }
         }
     }

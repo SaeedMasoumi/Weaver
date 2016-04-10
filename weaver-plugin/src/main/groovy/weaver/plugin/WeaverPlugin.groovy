@@ -2,6 +2,9 @@ package weaver.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.plugins.ApplicationPlugin
+import org.gradle.api.plugins.JavaPlugin
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -11,16 +14,39 @@ class WeaverPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         //Add weaver configuration
-        project.configurations.create("weaver")
+        createWeaverConfiguration project
         //Add weaver extension
         project.extensions.create('weaver', WeaverExtension)
+
+        //Apply weaver java plugin
+        project.plugins.withType(JavaPlugin) {
+            project.apply plugin: WeaverPluginJava
+        }
+        project.plugins.withType(ApplicationPlugin) {
+            //TODO need test
+        }
+
+        //Apply weaver android plugin
+        project.plugins.withId("com.android.application") {
+            project.apply plugin: WeaverPluginAndroid
+        }
+        project.plugins.withId("android") {
+            project.apply plugin: WeaverPluginAndroid
+        }
+        project.plugins.withId("com.android.library") {
+            project.apply plugin: WeaverPluginAndroid
+        }
+        project.plugins.withId("android-library") {
+            project.apply plugin: WeaverPluginAndroid
+        }
     }
 
-    static addTask(Project project, String name, def type) {
-        project.task(name, type: type)
-    }
-
-    static getTask(Project project, String name) {
-        return project.tasks.getByName(name)
+    static void createWeaverConfiguration(Project project) {
+        Configuration compileConf = project.configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME)
+        def weaverConf = project.configurations.create("weaver")
+                .setTransitive(true)
+                .setVisible(true)
+                .setDescription("Like $compileConf.name, but it will not add any scopes to generated pom file")
+        compileConf.extendsFrom(weaverConf)
     }
 }
