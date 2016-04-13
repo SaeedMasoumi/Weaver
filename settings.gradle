@@ -1,4 +1,16 @@
 rootProject.name = 'Weaver'
 include 'weaver-processor'
 include 'weaver-plugin'
+include 'tests/test-android-app'
+include 'tests/test-java8'
+include 'tests/test-java7'
+include 'tests/test-processor'
+include 'tests/test-annotation'
 
+
+rootProject.children.each { project ->
+    if (project.name.startsWith("tests/")) {
+        int slash = project.name.indexOf("/")
+        project.name = project.name.substring(slash + 1)
+    }
+}

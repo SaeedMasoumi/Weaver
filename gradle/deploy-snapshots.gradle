@@ -1,14 +1,9 @@
 apply plugin: 'com.bmuschko.nexus'
 
-ext {
-    projectName = ''
-    projectDescription = ''
-}
-
 modifyPom {
     project {
-        name projectName
-        description projectDescription
+        name project.property("repoName")
+        description project.property("repoDescription")
         url 'https://github.com/SaeedMasoumi/Weaver'
         inceptionYear '2016'
 
@@ -33,7 +28,9 @@ modifyPom {
 task deploySnapshots {
     def ourSlug = "SaeedMasoumi/Weaver"
     def travisSlug = System.getenv("TRAVIS_REPO_SLUG")
-    if (travisSlug) {
+    boolean isEnable = project.hasProperty("enable")
+
+    if (travisSlug && isEnable) {
         if (!ourSlug.equals(travisSlug)) {
             throw new RuntimeException("Skipping snapshot deployment:  Expected '$ourSlug' but was '$travisSlug'.")
         }

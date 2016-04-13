@@ -1,5 +1,6 @@
 package weaver.plugin
 
+import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
@@ -17,21 +18,20 @@ class WeaverPluginAndroid implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        super.apply(project)
         project.afterEvaluate {
             def variants = getVariants { String name -> project.plugins.findPlugin(name) }
-            project.android[variants].all { variant ->
+            project.android[variants].all { BaseVariant variant ->
                 //TODO check whether variant has been rejected or not
                 def taskName = "$TRANSFORMER_TASK${variant.name.capitalize()}"
-                JavaCompile androidJavaCompile = variant.javaCompile
-                FileCollection classpathFileCollection = project.files(project.android.bootClasspath)
-                classpathFileCollection += androidJavaCompile.classpath
+                JavaCompile javaCompileTask = variant.javaCompiler as JavaCompile
+                FileCollection classpathFileCollection = project.files(javaCompileTask.options.bootClasspath)
+                classpathFileCollection += javaCompileTask.classpath
 
                 def transformerTask = project.task(taskName, type: AndroidTransformerTask) {
-                    javaCompile = androidJavaCompile
+                    javaCompile = javaCompileTask
                     classPath = classpathFileCollection
                 }
-                transformerTask.mustRunAfter androidJavaCompile
+                transformerTask.mustRunAfter javaCompileTask
             }
         }
     }

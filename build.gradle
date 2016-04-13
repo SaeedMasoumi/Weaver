@@ -5,10 +5,16 @@ plugins {
 group GROUP
 version VERSION
 
-subprojects { subProject ->
+subprojects { subproj ->
     group GROUP
     version VERSION
 
+    buildscript {
+        repositories {
+            mavenCentral()
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        }
+    }
     repositories {
         mavenCentral()
         jcenter()
@@ -17,9 +23,23 @@ subprojects { subProject ->
         }
     }
 
-    apply plugin: 'java'
     apply from: rootProject.file('gradle/dependencies.gradle')
-    apply from: rootProject.file('gradle/push-artifacts.gradle')
 
-    sourceCompatibility = 1.7
+    subproj.tasks.withType(JavaCompile) {
+        sourceCompatibility = subproj.sourceCompatibility
+        targetCompatibility = subproj.targetCompatibility
+    }
+
+    subproj.tasks.withType(GroovyCompile) {
+        sourceCompatibility = subproj.sourceCompatibility
+        targetCompatibility = subproj.targetCompatibility
+    }
+
+    if (subproj.name.startsWith("test-")) {
+        buildscript {
+            dependencies {
+                classpath 'io.saeid.weaver:weaver-plugin:0.2-SNAPSHOT'
+            }
+        }
+    }
 }

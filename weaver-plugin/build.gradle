@@ -1,7 +1,9 @@
-projectName = 'Weaver Gradle Plugin'
-projectDescription = 'Gradle plugin that provides bytecode manipulation.'
-
 apply plugin: 'groovy'
+apply plugin: 'java'
+apply from: rootProject.file('gradle/deploy-snapshots.gradle')
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 sourceSets {
     main {
@@ -15,6 +17,6 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
     compile project(':weaver-processor')
-    testCompile deps.android
+    compile deps.android //TODO provided
     testCompile deps.groovyAndroidPlugin
 }
