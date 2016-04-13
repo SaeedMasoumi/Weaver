@@ -20,8 +20,7 @@ abstract class TransformerTask extends DefaultTask {
 
     @TaskAction
     def doTransform() {
-        loadClassLoader()
-        transform()
+
     }
 
 

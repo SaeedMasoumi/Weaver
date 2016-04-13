@@ -5,9 +5,4 @@ package weaver.plugin.task
  */
 class AndroidTransformerTask extends TransformerTask {
 
-
-    @Override
-    def transform() {
-
-    }
 }
