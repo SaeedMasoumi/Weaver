@@ -38,7 +38,7 @@ subprojects { subproj ->
     if (subproj.name.startsWith("test-")) {
         buildscript {
             dependencies {
-                classpath 'io.saeid.weaver:weaver-plugin:0.2-SNAPSHOT'
+                classpath deps.weaverPlugin
             }
         }
     }

@@ -6,5 +6,6 @@ ext.deps = [
         groovyAndroidPlugin: "org.codehaus.groovy:gradle-groovy-android-plugin:0.3.8",
         easyMock           : "org.easymock:easymock:3.4",
 
-        weaverProcessor    : "io.saeid.weaver:weaver-processor:$VERSION"
+        weaverProcessor    : "io.saeid.weaver:weaver-processor:$VERSION",
+        weaverPlugin       : "io.saeid.weaver:weaver-plugin:$VERSION"
 ]
