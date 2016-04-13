@@ -1,11 +1,14 @@
 ext.deps = [
         javassist          : "org.javassist:javassist:3.20.0-GA",
-        junit              : "junit:junit:4.11",
         android            : "com.android.tools.build:gradle:2.1.0-alpha5",
-
+        groovy             : "org.codehaus.groovy:groovy-all:2.4.1",
         groovyAndroidPlugin: "org.codehaus.groovy:gradle-groovy-android-plugin:0.3.8",
+
+        junit              : "junit:junit:4.11",
         easyMock           : "org.easymock:easymock:3.4",
+        spock              : "org.spockframework:spock-core:1.0-groovy-2.4",
 
         weaverProcessor    : "io.saeid.weaver:weaver-processor:$VERSION",
-        weaverPlugin       : "io.saeid.weaver:weaver-plugin:$VERSION"
+        weaverPlugin       : "io.saeid.weaver:weaver-plugin:$VERSION",
+        testProcessor      : "io.saeid.weaver:test-processor:0.2-SNAPSHOT"
 ]

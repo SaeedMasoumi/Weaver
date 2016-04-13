@@ -6,37 +6,42 @@ import weaver.processor.WeaverProcessor
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-@Singleton
-class ProcessorExtractor {
+class ProcessorLoader {
 
-    static final PROCESSORS_PROP = "/META-INF/weaver/processors"
+    static final PROCESSORS_PROP = "META-INF/weaver/processors"
 
     private Project project
+    private Set<File> dependencies
     private ClassLoader cl
-    private ArrayList processorsClassNames
+    private Set<File> jarFiles
 
-    public ProcessorExtractor with(Project project) {
+    public ProcessorLoader(Project project, Set<File> dependencies) {
         this.project = project
-        return this
+        this.dependencies = dependencies
     }
 
-    public ArrayList<WeaverProcessor> getProcessors() {
-        load()
-        return null
-    }
     /**
-     * Before transforming classes, {@code # cl} must be initialized because weaver plugin
-     * needs to know {@link weaver.processor.WeaverProcessor} classes, So this method prepares them
-     * by loading all classes and resources from .jar/.aar files that has been notated with 'weaver'
-     * scope in dependencies.
+     * @return Returns Instantiated {@code WeaverProcessor}s from {@link #PROCESSORS_PROP} location.
+     */
+    public ArrayList<WeaverProcessor> getProcessors() {
+        def names = getProcessorsName(load())
+        def processors = []
+        names.forEach { String name ->
+            processors.add(loadClass(name))
+        }
+        return processors
+    }
+
+    /**
      *
+     * @return First Finds all jar dependencies in weaver scope from configurations container
+     * and then initializes classloader, finally returns all jar dependencies.
      */
     def load() {
         if (!project) throw new NullPointerException("Project instance is null!")
-        if (cl) return
-        Set<File> jarFiles = getAllJarFiles()
-        loadJars(jarFiles)
-        processorsClassNames = getAllProcessorsName(jarFiles)
+        jarFiles = getAllJarFiles()
+        initClassLoader(jarFiles)
+        return jarFiles
     }
 
     /**
@@ -47,7 +52,7 @@ class ProcessorExtractor {
      */
     def getAllJarFiles() {
         def jarFiles = []
-        project.configurations.weaver.files.forEach {
+        dependencies.forEach {
             if (it.name.endsWith(".jar")) {
                 jarFiles.add(it)
             } else if (it.name.endsWith(".aar")) {
@@ -62,14 +67,18 @@ class ProcessorExtractor {
         return jarFiles
     }
 
-    def loadJars(Set<File> jarFiles) {
+    /**
+     * Before transforming classes, {@code # cl} must be initialized because weaver plugin
+     * needs to know about {@link weaver.processor.WeaverProcessor} classes, So this method prepares them
+     * by loading all classes and resources from .jar/.aar files that has been notated with 'weaver'
+     * scope in dependencies.
+     *
+     */
+    def initClassLoader(Set<File> jarFiles) {
         if (jarFiles) {
             def urls = jarFiles.collect() { it.toURI().toURL() }
             cl = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
             Thread.currentThread().contextClassLoader = cl
-            jarFiles.forEach {
-                project.logger.quiet("$name Task: $it.name has been added to classloader")
-            }
         } else {
             cl = Thread.currentThread().contextClassLoader
         }
@@ -77,29 +86,27 @@ class ProcessorExtractor {
     /**
      * Extracts {@code WeaverProcessor} classes from {@link #PROCESSORS_PROP} location.
      */
-    def getAllProcessorsName(Set<File> jarFiles) {
-        def weaverProcessors = []
+    def getProcessorsName(Set<File> jarFiles) {
+        def names = []
         jarFiles.forEach {
-            def zipTree = project.zipTree(it).matching {
+            def prop = project.zipTree(it).matching {
                 include PROCESSORS_PROP
             }
-            if (zipTree.files) {
-                File propFile = zipTree.singleFile
+            if (prop.files) {
+                def propFile = prop.singleFile
                 if (propFile) {
-                    Properties props = new Properties()
-                    propFile.withInputStream {
-                        props.load(it)
+                    propFile.eachLine {
+                        names.add(it)
                     }
-                    weaverProcessors.addAll(props.getProperty("weaverProcessors").split(",").collect())
                 }
             }
-
         }
-        return weaverProcessors
+
+        return names
     }
 
-    protected Class loadClass(String name) {
-        return cl.loadClass(name)
+    WeaverProcessor loadClass(String name) {
+        return cl.loadClass(name).newInstance() as WeaverProcessor
     }
 
 }

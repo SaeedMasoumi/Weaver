@@ -18,9 +18,7 @@ subprojects { subproj ->
     repositories {
         mavenCentral()
         jcenter()
-        repositories {
-            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
 
     apply from: rootProject.file('gradle/dependencies.gradle')

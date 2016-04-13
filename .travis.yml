@@ -2,7 +2,7 @@ language: groovy
 
 jdk:
   - oraclejdk8
-
+.
 env:
   global:
     - secure: "pPa8+T96ehzQUzhhS31NSkG8y9kydhB4m2PxJrNsWi7gzpFNNWto+IQeOoFMKnHgja56A/lPAz5lycPezkZveD+57f+AtQb3Wk09QV+Ks/6h/FOeOZb+VJE+71msTDte344VjRW3NDnWhgq06UAD+h6fjCpQ0CP1BCrE8OQ/MTG2kZJr0a9RdsxukRniA9w4NKg97UbzN2b5uhqDVn6z56fKaJ4xhwOP/JlNO/154lk3bCJrLknn3IDuLYPvxTv2BDIbm0e8Kn5nlxXgIoXbRg7RUjW8KOdDmVCC3zpM3YH5JxrM03ORO9/Nm9941l8pyxqgSwXXxa+kn4xYeGvs3Cf3oFMqoewKE7VCUleLUQo5DAWHmcYdH/aU90rjvCFWzh6ab9+v0EOdbNxIIePtAfuObxfWkdSLG48pNHEaelG3DtCa6MWDMcZCb6Gagm7F3gQgIzvJ0gHUp1WYuoWfoRHruSvH+LlvDNDuHrjECADqXuOAK1lv/IshAtM/ut6aZOIxXTZpZca/Xw0bXPtKLzkOgO6Sz5/Yu/pbIft93r+TYbDi9QHmXSATYai2sRGZjKw8hek2U+fTq9ey9HvcLocEkFFTQGmkowH07aEHmq80AElWiwIrd4iGPXWyAQCFBCPWPBzBH+3sy99plPZJdPhi310CUMFVubV4Bgvzvto="
@@ -13,7 +13,7 @@ cache:
     - $HOME/.gradle
 
 script:
-  -  ./gradlew assemble --info
+  -  ./gradlew assemble check --info
 
 after_success:
   - ./gradlew uploadArchives

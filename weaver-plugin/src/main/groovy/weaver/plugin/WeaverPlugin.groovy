@@ -17,7 +17,7 @@ class WeaverPlugin implements Plugin<Project> {
         createWeaverConfiguration project
         //Add weaver extension
         project.extensions.create('weaver', WeaverExtension)
-
+//        project.configurations.weaver.files
         //Apply weaver java plugin
         project.plugins.withType(JavaPlugin) {
             project.apply plugin: WeaverPluginJava
