@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.JavaCompile
-import weaver.plugin.task.AndroidTransformerTask
+import weaver.plugin.task.TransformerTask
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -27,11 +27,15 @@ class WeaverPluginAndroid implements Plugin<Project> {
                 FileCollection classpathFileCollection = project.files(javaCompileTask.options.bootClasspath)
                 classpathFileCollection += javaCompileTask.classpath
 
-                def transformerTask = project.task(taskName, type: AndroidTransformerTask) {
-                    javaCompile = javaCompileTask
-                    classPath = classpathFileCollection
-                }
+                def transformerTask =
+                        new TransformerTask.Builder()
+                                .setClassesDir(javaCompileTask.destinationDir)
+                                .setClasspath(classpathFileCollection)
+                                .setOutputDir(project.file("$project.buildDir/intermediates/weaver/$variant.name"))
+                                .setTaskName(taskName)
+                                .build(project)
                 transformerTask.mustRunAfter javaCompileTask
+                variant.assemble.dependsOn transformerTask
             }
         }
     }

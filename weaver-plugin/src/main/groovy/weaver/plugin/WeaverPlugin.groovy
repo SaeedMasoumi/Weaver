@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.plugins.JavaPlugin
+import weaver.plugin.internal.ProcessorLoader
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -17,7 +18,7 @@ class WeaverPlugin implements Plugin<Project> {
         createWeaverConfiguration project
         //Add weaver extension
         project.extensions.create('weaver', WeaverExtension)
-//        project.configurations.weaver.files
+
         //Apply weaver java plugin
         project.plugins.withType(JavaPlugin) {
             project.apply plugin: WeaverPluginJava
@@ -49,4 +50,5 @@ class WeaverPlugin implements Plugin<Project> {
                 .setDescription("Like $compileConf.name, but it will not add any scopes to generated pom file")
         compileConf.extendsFrom(weaverConf)
     }
+
 }

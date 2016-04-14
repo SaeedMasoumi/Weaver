@@ -4,8 +4,8 @@ include 'weaver-plugin'
 include 'tests/test-android-app'
 include 'tests/test-java8'
 include 'tests/test-java7'
-include 'tests/test-processor'
-include 'tests/test-annotation'
+include 'tests/sample-processor'
+include 'tests/sample-annotation'
 
 
 rootProject.children.each { project ->

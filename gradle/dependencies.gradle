@@ -1,6 +1,6 @@
 ext.deps = [
         javassist          : "org.javassist:javassist:3.20.0-GA",
-        android            : "com.android.tools.build:gradle:2.1.0-alpha5",
+        android            : "com.android.tools.build:gradle:2.0.0",
         groovy             : "org.codehaus.groovy:groovy-all:2.4.1",
         groovyAndroidPlugin: "org.codehaus.groovy:gradle-groovy-android-plugin:0.3.8",
 
@@ -10,5 +10,5 @@ ext.deps = [
 
         weaverProcessor    : "io.saeid.weaver:weaver-processor:$VERSION",
         weaverPlugin       : "io.saeid.weaver:weaver-plugin:$VERSION",
-        testProcessor      : "io.saeid.weaver:test-processor:0.2-SNAPSHOT"
+        sampleProcessor    : "io.saeid.weaver:sample-processor:0.2-SNAPSHOT"
 ]
