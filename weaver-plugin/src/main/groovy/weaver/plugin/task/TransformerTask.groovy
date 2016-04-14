@@ -65,8 +65,8 @@ public class TransformerTask extends DefaultTask {
             }
             task.doLast {
                 project.copy {
-                    from outputDir
-                    to classesDir
+                    from outputDir.path
+                    to classesDir.path
                 }
             }
             return task
