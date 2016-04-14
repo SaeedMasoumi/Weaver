@@ -15,15 +15,20 @@ import weaver.processor.WeaverProcessor
  */
 public class TransformerTask extends DefaultTask {
 
-    private def classpath
     @InputDirectory
-    private def classesDir
+    private FileCollection classpath
+    private File classesDir
     @OutputDirectory
-    private def outputDir
+    private File outputDir
 
     @TaskAction
     def doTransform() {
-        project.logger.quiet("____transforming____")
+        if (classesDir.isDirectory()) {
+            if (classesDir.length() == 0) {
+                logger.warn("$name: $classesDir.path is empty, weaving ingored")
+            }
+        }
+        def weaverProcessors = getProcessors()
     }
 
     ArrayList<WeaverProcessor> getProcessors() {
@@ -56,7 +61,6 @@ public class TransformerTask extends DefaultTask {
             return this
         }
 
-
         public Task build(Project project) {
             def task = project.task(name, type: TransformerTask) {
                 classpath = this.classpath
@@ -71,7 +75,6 @@ public class TransformerTask extends DefaultTask {
             }
             return task
         }
-
 
     }
 }
