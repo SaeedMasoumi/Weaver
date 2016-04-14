@@ -34,11 +34,5 @@ subprojects { subproj ->
         targetCompatibility = subproj.targetCompatibility
     }
 
-    if (subproj.name.startsWith("test-")) {
-        buildscript {
-            dependencies {
-                classpath deps.weaverPlugin
-            }
-        }
-    }
+
 }

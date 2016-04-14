@@ -5,7 +5,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.plugins.JavaPlugin
-import weaver.plugin.internal.ProcessorLoader
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -28,18 +27,12 @@ class WeaverPlugin implements Plugin<Project> {
         }
 
         //Apply weaver android plugin
-        project.plugins.withId("com.android.application") {
+        def hasPlugin = { String id -> project.plugins.hasPlugin(id) }
+        if (hasPlugin("com.android.application") || hasPlugin("android") ||
+                hasPlugin("com.android.library") || hasPlugin("android-library")) {
             project.apply plugin: WeaverPluginAndroid
         }
-        project.plugins.withId("android") {
-            project.apply plugin: WeaverPluginAndroid
-        }
-        project.plugins.withId("com.android.library") {
-            project.apply plugin: WeaverPluginAndroid
-        }
-        project.plugins.withId("android-library") {
-            project.apply plugin: WeaverPluginAndroid
-        }
+
     }
 
     static void createWeaverConfiguration(Project project) {
