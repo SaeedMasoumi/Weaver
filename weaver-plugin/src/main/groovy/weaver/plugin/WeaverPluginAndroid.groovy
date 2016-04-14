@@ -23,10 +23,10 @@ class WeaverPluginAndroid implements Plugin<Project> {
             project.android[variants].all { BaseVariant variant ->
                 //TODO check whether variant has been rejected or not
                 def taskName = "$TRANSFORMER_TASK${variant.name.capitalize()}"
-                JavaCompile javaCompileTask = variant.javaCompiler as JavaCompile
+                JavaCompile javaCompileTask = variant.javaCompiler as JavaCompile //TODO it kills jack & jill
                 FileCollection classpathFileCollection = project.files(javaCompileTask.options.bootClasspath)
                 classpathFileCollection += javaCompileTask.classpath
-
+                //TODO pass exclude type for .class files (e.g. R.class)
                 def transformerTask =
                         new TransformerTask.Builder()
                                 .setClassesDir(javaCompileTask.destinationDir)

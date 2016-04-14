@@ -9,8 +9,8 @@ public abstract class WeaverProcessor {
 
     private Logger logger;
 
-    public synchronized void init() {
-
+    public synchronized void init(ProcessingEnvironment env) {
+        logger = env.getLogger();
     }
 
     public abstract void apply(CtClass ctClass);
