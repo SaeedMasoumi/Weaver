@@ -28,10 +28,7 @@ modifyPom {
 task deploySnapshots {
     def ourSlug = "SaeedMasoumi/Weaver"
     def travisSlug = System.getenv("TRAVIS_REPO_SLUG")
-    boolean isEnable = project.hasProperty("enable") ?
-            Boolean.parseBoolean(project.property("enable") as String) : false
-
-    if (travisSlug && isEnable) {
+    if (travisSlug) {
         if (!ourSlug.equals(travisSlug)) {
             throw new RuntimeException("Skipping snapshot deployment:  Expected '$ourSlug' but was '$travisSlug'.")
         }

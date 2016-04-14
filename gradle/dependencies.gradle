@@ -10,5 +10,5 @@ ext.deps = [
 
         weaverProcessor    : "io.saeid.weaver:weaver-processor:$VERSION",
         weaverPlugin       : "io.saeid.weaver:weaver-plugin:$VERSION",
-        sampleProcessor    : "io.saeid.weaver:sample-processor:0.2-SNAPSHOT"
+        sampleProcessor    : "io.saeid.weaver:sample-processor:$VERSION"
 ]
