@@ -14,7 +14,6 @@ class ProcessorExtractionTest {
     void "Check classes are loaded from META-INF"() {
 
         Project project = ProjectBuilder.builder().build()
-        project.file(".").mkdir();
         project.apply plugin: 'java'
         project.repositories {
             jcenter()
@@ -25,10 +24,10 @@ class ProcessorExtractionTest {
             compile "io.saeid.weaver:sample-processor:0.2-SNAPSHOT"
         }
         
-//        ProcessorLoader loader = new ProcessorLoader(project, project.configurations.compile.files)
-//        def processors = loader.getProcessors()
-//        def names = processors.collect({ it.getClass().getCanonicalName() })
-//        assert names.contains("io.saeid.weaver.test.processor.Processor1")
-//        assert names.contains("io.saeid.weaver.test.processor.Processor2")
+        ProcessorLoader loader = new ProcessorLoader(project, project.configurations.compile.files)
+        def processors = loader.getProcessors()
+        def names = processors.collect({ it.getClass().getCanonicalName() })
+        assert names.contains("io.saeid.weaver.test.processor.Processor1")
+        assert names.contains("io.saeid.weaver.test.processor.Processor2")
     }
 }

@@ -3,7 +3,7 @@ rootProject.name = 'Weaver'
 include 'weaver-processor'
 include 'weaver-plugin'
 include 'tests/test-java8'
-include 'tests/test-java7'
+include 'tests/test-plugin'
 include 'tests/sample-processor'
 include 'tests/sample-annotation'
 
