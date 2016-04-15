@@ -23,7 +23,7 @@ class ProcessorExtractionTest {
         project.dependencies {
             compile "io.saeid.weaver:sample-processor:0.2-SNAPSHOT"
         }
-        
+
         ProcessorLoader loader = new ProcessorLoader(project, project.configurations.compile.files)
         def processors = loader.getProcessors()
         def names = processors.collect({ it.getClass().getCanonicalName() })
