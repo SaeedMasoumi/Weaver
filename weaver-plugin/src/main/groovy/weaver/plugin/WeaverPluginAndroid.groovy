@@ -25,12 +25,12 @@ class WeaverPluginAndroid implements Plugin<Project> {
             if (isLibrary) {
                 def android = project.extensions.getByType(LibraryExtension)
                 android.libraryVariants.all { BaseVariant variant ->
-                    configure(project, variant, isLibrary)
+                    configure project, variant, isLibrary
                 }
             } else {
                 def android = project.extensions.getByType(AppExtension)
                 android.applicationVariants.all { BaseVariant variant ->
-                    configure(project, variant, isLibrary)
+                    configure project, variant, isLibrary
                 }
             }
         }

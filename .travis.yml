@@ -1,12 +1,5 @@
 language: java
 jdk: oraclejdk7
-before_install:
-# Install Android SDK
-    - sudo apt-get update
-    - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-    - set COMPONENTS="build-tools-23.0.3,android-23,extra-google-m2repository,extra-android-m2repository"
-    - set LICENSES="android-sdk-license-c81a61d9"
-    - curl -L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin  --install=$COMPONENTS --accept=$LICENSES && source ~/.android-sdk-installer/env
 
 env:
   global:
@@ -18,7 +11,7 @@ cache:
     - $HOME/.gradle
 
 script:
-  -  ./gradlew assemble check --info
+  -  ./gradlew clean assemble check --info
 
 after_success:
   - ./gradlew uploadArchives
