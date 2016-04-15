@@ -1,4 +1,4 @@
-language: groovy
+language: java
 
 jdk:
   - oraclejdk8
@@ -11,6 +11,7 @@ env:
 cache:
   directories:
     - $HOME/.gradle
+    
 before_install:
     # Install Android SDK
     - sudo apt-get update
