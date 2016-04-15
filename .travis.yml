@@ -11,8 +11,12 @@ env:
 cache:
   directories:
     - $HOME/.gradle
-
-script:
+before_install:
+    # Install Android SDK
+    - sudo apt-get update
+    - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
+    - curl -L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=build-tools-23.0.1,android-23,extra-google-m2repository,extra-android-m2repository && source ~/.android-sdk-installer/env
+ script:
   -  ./gradlew assemble check --info
 
 after_success:
