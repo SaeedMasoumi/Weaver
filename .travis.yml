@@ -4,7 +4,9 @@ before_install:
 # Install Android SDK
     - sudo apt-get update
     - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-    - curl -L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=build-tools-23.0.1,android-23,extra-google-m2repository,extra-android-m2repository && source ~/.android-sdk-installer/env
+    - set COMPONENTS="build-tools-23.0.3,android-23,extra-google-m2repository,extra-android-m2repository"
+    - set LICENSES="android-sdk-license-c81a61d9"
+    - curl -L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin  --install=$COMPONENTS --accept=$LICENSES && source ~/.android-sdk-installer/env
 
 env:
   global:
