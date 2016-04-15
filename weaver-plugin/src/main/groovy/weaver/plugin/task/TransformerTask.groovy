@@ -9,7 +9,9 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import weaver.plugin.internal.ProcessorLoader
+import weaver.plugin.internal.processor.ProcessingEnvironmentImp
+import weaver.plugin.internal.processor.ProcessorLoader
+import weaver.processor.ProcessingEnvironment
 import weaver.processor.WeaverProcessor
 
 /**
@@ -36,10 +38,10 @@ public class TransformerTask extends DefaultTask {
 
     def weaving() {
         def weaverProcessors = getProcessors()
-        //TODO get processing env
+        ProcessingEnvironment env = getProcessingEnvironment()
         //init processors
         weaverProcessors.forEach {
-            it.init(null)
+            it.init(env)
         }
         final ClassPool pool = createPool();
         getClasses().forEach {
@@ -52,6 +54,10 @@ public class TransformerTask extends DefaultTask {
             }
             ctClass.writeFile(outputDir.path)
         }
+    }
+
+    ProcessingEnvironment getProcessingEnvironment() {
+        return new ProcessingEnvironmentImp(project)
     }
 
     ClassPool createPool() {

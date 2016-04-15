@@ -1,4 +1,4 @@
-package weaver.plugin.internal
+package weaver.plugin.internal.processor
 
 import org.gradle.api.Project
 import weaver.processor.WeaverProcessor

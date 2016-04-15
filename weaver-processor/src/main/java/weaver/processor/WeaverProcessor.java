@@ -7,7 +7,7 @@ import javassist.CtClass;
  */
 public abstract class WeaverProcessor {
 
-    private Logger logger;
+    protected Logger logger;
 
     public synchronized void init(ProcessingEnvironment env) {
         logger = env.getLogger();
