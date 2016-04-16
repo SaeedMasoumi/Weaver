@@ -44,6 +44,7 @@ public class TransformerTask extends DefaultTask {
             it.init(env)
         }
         final ClassPool pool = createPool();
+        getClass().each {}
         getClasses().forEach {
             CtClass ctClass = loadClassFile(pool, it)
             weaverProcessors.forEach {
