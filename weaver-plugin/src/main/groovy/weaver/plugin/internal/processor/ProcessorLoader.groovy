@@ -26,9 +26,7 @@ class ProcessorLoader {
     public ArrayList<WeaverProcessor> getProcessors() {
         def names = getProcessorsName(load())
         def processors = []
-        names.forEach { String name ->
-            processors.add(loadClass(name))
-        }
+        for (String name : names) processors.add(loadClass(name))
         return processors
     }
 
@@ -86,7 +84,7 @@ class ProcessorLoader {
     /**
      * Extracts {@code WeaverProcessor} classes from {@link #PROCESSORS_PROP} location.
      */
-    def getProcessorsName(Set<File> jarFiles) {
+    ArrayList<String> getProcessorsName(Set<File> jarFiles) {
         def names = []
         for (File it : jarFiles) {
             def prop = project.zipTree(it).matching {
