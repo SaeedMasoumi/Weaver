@@ -23,6 +23,7 @@ script:
     - ./gradlew clean assemble check --info
 
 after_success:
+    -  chmod ugo+x .buildscript/deploy_snapshots.sh
     - .buildscript/deploy_snapshots.sh
 
 notifications:
