@@ -13,7 +13,7 @@ cache:
     - $HOME/.gradle
 
 script:
-  -  ./gradlew clean assemble check --info
+  -  ./gradlew clean assemble --info
 
 after_success:
   - ./gradlew uploadArchives

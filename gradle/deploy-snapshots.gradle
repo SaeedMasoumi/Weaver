@@ -35,6 +35,9 @@ task deploySnapshots {
         if (!VERSION.endsWith("-SNAPSHOT")) {
             throw new RuntimeException("$project.name version should contains snapshot")
         }
+        if (System.getProperty("java.version").startsWith("1.8")) {
+            throw new RuntimeException("Skipping snapshot deployment for java 8")
+        }
         def nexusUserName = System.getenv("NEXUS_USERNAME")
         def nexusPassword = System.getenv("NEXUS_PASSWORD")
         if (!nexusUserName && !nexusPassword) {
