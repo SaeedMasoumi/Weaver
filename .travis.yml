@@ -1,6 +1,8 @@
 language: java
+install: true
 jdk:
     - oraclejdk7
+    - oraclejdk8
 
 env:
   global:
@@ -10,12 +12,18 @@ env:
 cache:
   directories:
     - $HOME/.gradle
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install oracle-java8-installer
+    - sudo apt-get install oracle-java7-installer
 
+before_script:
+    - ./gradlew --version
 script:
-  -  ./gradlew clean assemble check --info
+    - ./gradlew clean assemble check --info
 
 after_success:
-  - ./gradlew uploadArchives
+    - .buildscript/deploy_snapshots.sh
 
 notifications:
   email: false

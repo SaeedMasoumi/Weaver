@@ -29,9 +29,6 @@ task deploySnapshots {
     def ourSlug = "SaeedMasoumi/Weaver"
     def travisSlug = System.getenv("TRAVIS_REPO_SLUG")
     if (travisSlug) {
-        if (!ourSlug.equals(travisSlug)) {
-            throw new RuntimeException("Skipping snapshot deployment:  Expected '$ourSlug' but was '$travisSlug'.")
-        }
         if (!VERSION.endsWith("-SNAPSHOT")) {
             throw new RuntimeException("$project.name version should contains snapshot")
         }
