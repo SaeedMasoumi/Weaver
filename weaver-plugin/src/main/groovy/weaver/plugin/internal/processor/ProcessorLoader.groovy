@@ -52,16 +52,16 @@ class ProcessorLoader {
      */
     def getAllJarFiles() {
         def jarFiles = []
-        dependencies.forEach {
+        for (File it : dependencies) {
             if (it.name.endsWith(".jar")) {
                 jarFiles.add(it)
             } else if (it.name.endsWith(".aar")) {
-                project.zipTree(it).matching {
-                    include '**/*.jar'
-                    exclude 'lint.jar'
-                }.files.forEach {
-                    jarFiles.add(it)
-                }
+                jarFiles.addAll(
+                        project.zipTree(it).matching {
+                            include '**/*.jar'
+                            exclude 'lint.jar'
+                        }.files
+                )
             }
         }
         return jarFiles
@@ -88,7 +88,7 @@ class ProcessorLoader {
      */
     def getProcessorsName(Set<File> jarFiles) {
         def names = []
-        jarFiles.forEach {
+        for (File it : jarFiles) {
             def prop = project.zipTree(it).matching {
                 include PROCESSORS_PROP
             }
