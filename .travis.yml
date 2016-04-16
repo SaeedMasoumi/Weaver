@@ -1,7 +1,6 @@
 language: java
 jdk:
     - oraclejdk7
-    - oraclejdk8
 
 env:
   global:
@@ -13,7 +12,7 @@ cache:
     - $HOME/.gradle
 
 script:
-  -  ./gradlew clean assemble --info
+  -  ./gradlew clean assemble check --info
 
 after_success:
   - ./gradlew uploadArchives
