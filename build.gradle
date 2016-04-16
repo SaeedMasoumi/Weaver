@@ -25,13 +25,13 @@ subprojects { subproj ->
     apply from: rootProject.file('gradle/dependencies.gradle')
 
     subproj.tasks.withType(JavaCompile) {
-        sourceCompatibility = subproj.sourceCompatibility
-        targetCompatibility = subproj.targetCompatibility
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
     }
 
     subproj.tasks.withType(GroovyCompile) {
-        sourceCompatibility = subproj.sourceCompatibility
-        targetCompatibility = subproj.targetCompatibility
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
     }
 
 

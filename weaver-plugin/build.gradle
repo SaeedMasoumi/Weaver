@@ -2,9 +2,6 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply from: rootProject.file('gradle/deploy-snapshots.gradle')
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
 sourceSets {
     main {
         java { srcDirs = [] }    // no source dirs for the java compiler
