@@ -20,7 +20,7 @@ before_install:
 before_script:
     - ./gradlew --version
 script:
-    - ./gradlew clean assemble check --info
+    - ./gradlew clean assemble test --info
 
 after_success:
     -  chmod ugo+x .buildscript/deploy_snapshots.sh
