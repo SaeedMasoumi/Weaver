@@ -9,11 +9,12 @@ import weaver.processor.WeaverProcessor;
 public class Processor2 extends WeaverProcessor {
     @Override
     public void apply(CtClass ctClass) {
-
+        logger.quiet("Apply " + ctClass.toString());
     }
 
     @Override
     public boolean filter(CtClass ctClass) {
+        logger.quiet("Filter on " + ctClass.toString());
         return false;
     }
 }

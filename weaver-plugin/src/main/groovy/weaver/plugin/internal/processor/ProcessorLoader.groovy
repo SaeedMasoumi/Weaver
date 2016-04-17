@@ -49,6 +49,7 @@ class ProcessorLoader {
      * See <a href="http://tools.android.com/tech-docs/new-build-system/aar-format">AAR Format</a> for more details.
      */
     def getAllJarFiles() {
+        //TODO maybe it takes too much time to get jars
         def jarFiles = []
         for (File it : dependencies) {
             if (it.name.endsWith(".jar")) {

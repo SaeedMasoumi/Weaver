@@ -4,6 +4,7 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.api.BaseVariant
+import com.android.jack.api.JackConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -43,6 +44,7 @@ class WeaverPluginAndroid implements Plugin<Project> {
         FileCollection classpathFileCollection = project.files(javaCompileTask.options.bootClasspath)
         classpathFileCollection += javaCompileTask.classpath
         //TODO pass exclude type for .class files (e.g. R.class)
+        //TODO source set should be included into classpath
         def transformerTask =
                 new TransformerTask.Builder()
                         .setClassesDir(javaCompileTask.destinationDir)

@@ -19,24 +19,30 @@ import weaver.processor.WeaverProcessor
  */
 public class TransformerTask extends DefaultTask {
 
+    /**
+     * Contains all .jar files and classes folder of source set related to this project.
+     */
     private FileCollection classpath
-    @InputDirectory
+    /**
+     * A folder which .class files live there.
+     */
     private File classesDir
-    @OutputDirectory
+    /**
+     * Snapshot of manipulated classes.
+     */
     private File outputDir
 
     @TaskAction
     def initTask() {
-        if (classesDir.isDirectory()) {
-            if (classesDir.length() == 0) {
-                logger.warn("$name: $classesDir.path is empty, weaving ingored")
-                return
-            }
-        }
+        //TODO ignore if classes dir is empty
+        int time = System.currentTimeMillis()
         weaving()
+        int duration = System.currentTimeMillis() - time
+        logger.debug("$name : Weaving takes $duration")
     }
 
     def weaving() {
+        logger.debug("$name : Start weaving")
         def weaverProcessors = getProcessors()
         ProcessingEnvironment env = getProcessingEnvironment()
         //init processors
@@ -44,17 +50,17 @@ public class TransformerTask extends DefaultTask {
             it.init(env)
         }
         final ClassPool pool = createPool();
-        getClass().each {}
         getClasses().forEach {
             CtClass ctClass = loadClassFile(pool, it)
             weaverProcessors.forEach {
                 if (it.filter(ctClass)) {
                     ctClass.defrost()
                     it.apply(ctClass)
+                    ctClass.writeFile(outputDir.path)
                 }
             }
-            ctClass.writeFile(outputDir.path)
         }
+
     }
 
     ProcessingEnvironment getProcessingEnvironment() {
@@ -90,6 +96,7 @@ public class TransformerTask extends DefaultTask {
             include '**/*.class'
         }.files
     }
+
     public static class Builder {
         FileCollection classpath
         File classesDir
@@ -131,5 +138,31 @@ public class TransformerTask extends DefaultTask {
             return task
         }
 
+    }
+
+    public FileCollection getClasspath() {
+        return classpath
+    }
+
+    public void setClasspath(FileCollection classpath) {
+        this.classpath = classpath
+    }
+
+    @InputDirectory
+    public File getClassesDir() {
+        return classesDir
+    }
+
+    public void setClassesDir(File classesDir) {
+        this.classesDir = classesDir
+    }
+
+    @OutputDirectory
+    public File getOutputDir() {
+        return outputDir
+    }
+
+    public void setOutputDir(File outputDir) {
+        this.outputDir = outputDir
     }
 }
