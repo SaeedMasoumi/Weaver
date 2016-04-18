@@ -34,11 +34,12 @@ public class TransformerTask extends DefaultTask {
 
     @TaskAction
     def initTask() {
+        logger.quiet("Start weaving (classes directory:$classesDir.name  output directory:$outputDir.name")
         //TODO ignore if classes dir is empty
         int time = System.currentTimeMillis()
         weaving()
         int duration = System.currentTimeMillis() - time
-        logger.debug("$name : Weaving takes $duration")
+        logger.quiet("$name : Weaving takes $duration")
     }
 
     def weaving() {
