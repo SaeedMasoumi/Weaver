@@ -36,13 +36,13 @@ class WeaverPlugin implements Plugin<Project> {
         }
     }
 
-//    static void createWeaverConfiguration(Project project) {
-//        Configuration compileConf = project.configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME)
-//        def weaverConf = project.configurations.create("weaver")
-//                .setVisible(false)
-//                .setDescription("Like $compileConf.name, but it will not add any scopes to generated pom file")
-//        compileConf.extendsFrom(weaverConf)
-//    }
+    static void createWeaverConfiguration(Project project) {
+        Configuration compileConf = project.configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME)
+        def weaverConf = project.configurations.create("weaver")
+                .setVisible(false)
+                .setDescription("Like $compileConf.name, but it will not add any scopes to generated pom file")
+        compileConf.extendsFrom(weaverConf)
+    }
 
     static void addConfigurationForAndroid(Project project) {
         project.configurations.create(WEAVER_CONF_NAME)
