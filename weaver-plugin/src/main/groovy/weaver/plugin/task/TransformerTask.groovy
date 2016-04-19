@@ -75,6 +75,7 @@ public class TransformerTask extends DefaultTask {
                 pool.appendClassPath(it.toString())
             }
         }
+        pool.appendClassPath(classesDir.toString())
         return pool
     }
 
