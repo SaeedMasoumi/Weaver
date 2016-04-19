@@ -4,7 +4,6 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.api.BaseVariant
-import com.android.jack.api.JackConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -54,6 +53,7 @@ class WeaverPluginAndroid implements Plugin<Project> {
                         .build(project)
         transformerTask.mustRunAfter javaCompileTask
         variant.assemble.dependsOn transformerTask
+        if (!isLibrary) variant.install?.dependsOn(transformerTask)
     }
 
 }
