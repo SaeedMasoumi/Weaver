@@ -52,7 +52,7 @@ public class TransformerTask extends DefaultTask {
             weaverProcessors.each {
                 if (it.filter(ctClass)) {
                     ctClass.defrost()
-                    it.apply(ctClass)
+                    it.process(ctClass)
                     ctClass.writeFile(outputDir.path)
                 }
             }

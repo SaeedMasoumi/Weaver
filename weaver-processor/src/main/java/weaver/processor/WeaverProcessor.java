@@ -13,7 +13,7 @@ public abstract class WeaverProcessor {
         logger = env.getLogger();
     }
 
-    public abstract void apply(CtClass ctClass);
+    public abstract void process(CtClass ctClass);
 
     public abstract boolean filter(CtClass ctClass);
 }

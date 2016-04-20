@@ -1,1 +1,1 @@
-# Weaver
+# Weaver [![Build Status](https://travis-ci.org/SaeedMasoumi/Weaver.svg?branch=master)](https://travis-ci.org/SaeedMasoumi/Weaver)
