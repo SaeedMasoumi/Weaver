@@ -1,9 +1,6 @@
-include ':test-android-app'
 rootProject.name = 'Weaver'
 include 'weaver-processor'
 include 'weaver-plugin'
-include 'tests/test-java8'
-include 'tests/test-plugin'
 include 'tests/sample-processor'
 include 'tests/sample-annotation'
 

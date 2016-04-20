@@ -4,6 +4,10 @@ import org.gradle.api.Project
 import weaver.processor.WeaverProcessor
 
 /**
+ * This class is responsible to finds all dependencies which annotated with "weaver" scope,
+ * then extract their processors and using a {@code ClassLoader} to loads classes
+ * and makes them accessible for {@link weaver.plugin.task.TransformerTask}.
+ *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 class ProcessorLoader {
@@ -24,7 +28,7 @@ class ProcessorLoader {
      * @return Returns Instantiated {@code WeaverProcessor}s from {@link #PROCESSORS_PROP} location.
      */
     public ArrayList<WeaverProcessor> getProcessors() {
-        def names = getProcessorsName(load())
+        def names = getProcessorsName(loadDependencies())
         def processors = []
         for (String name : names) processors.add(loadClass(name))
         return processors
@@ -35,7 +39,7 @@ class ProcessorLoader {
      * @return First Finds all jar dependencies in weaver scope from configurations container
      * and then initializes classloader, finally returns all jar dependencies.
      */
-    def load() {
+    def loadDependencies() {
         if (!project) throw new NullPointerException("Project instance is null!")
         jarFiles = getAllJarFiles()
         initClassLoader(jarFiles)

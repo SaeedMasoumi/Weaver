@@ -43,7 +43,6 @@ class WeaverPluginAndroid implements Plugin<Project> {
         FileCollection classpathFileCollection = project.files(javaCompileTask.options.bootClasspath)
         classpathFileCollection += javaCompileTask.classpath
         //TODO pass exclude type for .class files (e.g. R.class)
-        //TODO source set should be included into classpath
         def transformerTask =
                 new TransformerTask.Builder()
                         .setClassesDir(javaCompileTask.destinationDir)

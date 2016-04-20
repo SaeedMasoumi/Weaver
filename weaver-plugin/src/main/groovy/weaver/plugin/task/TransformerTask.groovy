@@ -19,12 +19,9 @@ import weaver.processor.WeaverProcessor
  */
 public class TransformerTask extends DefaultTask {
 
-    /**
-     * Contains all .jar files and classes folder of source set related to this project.
-     */
     private FileCollection classpath
     /**
-     * A folder which .class files live there.
+     * A folder which .class files exist there.
      */
     private File classesDir
     /**
@@ -43,7 +40,6 @@ public class TransformerTask extends DefaultTask {
     }
 
     def weaving() {
-        logger.debug("$name : Start weaving")
         def weaverProcessors = getProcessors()
         ProcessingEnvironment env = getProcessingEnvironment()
         //init processors
@@ -51,9 +47,9 @@ public class TransformerTask extends DefaultTask {
             it.init(env)
         }
         final ClassPool pool = createPool();
-        getClasses().forEach {
+        getClasses().each {
             CtClass ctClass = loadClassFile(pool, it)
-            weaverProcessors.forEach {
+            weaverProcessors.each {
                 if (it.filter(ctClass)) {
                     ctClass.defrost()
                     it.apply(ctClass)
@@ -71,7 +67,7 @@ public class TransformerTask extends DefaultTask {
     ClassPool createPool() {
         ClassPool pool = new ClassPool(true)
         if (classpath) {
-            classpath.forEach {
+            classpath.each {
                 pool.appendClassPath(it.toString())
             }
         }
