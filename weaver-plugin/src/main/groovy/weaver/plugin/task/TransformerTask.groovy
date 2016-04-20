@@ -43,7 +43,7 @@ public class TransformerTask extends DefaultTask {
         def weaverProcessors = getProcessors()
         ProcessingEnvironment env = getProcessingEnvironment()
         //init processors
-        weaverProcessors.forEach {
+        weaverProcessors.each {
             it.init(env)
         }
         final ClassPool pool = createPool();
