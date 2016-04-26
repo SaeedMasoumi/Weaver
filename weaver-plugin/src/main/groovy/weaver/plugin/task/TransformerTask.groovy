@@ -40,14 +40,14 @@ public class TransformerTask extends DefaultTask {
     }
 
     def weaving() {
+        final ClassPool pool = createPool();
         def weaverProcessors = getProcessors()
-        ProcessingEnvironment env = getProcessingEnvironment()
+        ProcessingEnvironment env = getProcessingEnvironment(pool)
         //init processors
         weaverProcessors.each {
             it.init(env)
         }
-        final ClassPool pool = createPool();
-        getClasses().each {
+        getClassesFiles().each {
             CtClass ctClass = loadClassFile(pool, it)
             weaverProcessors.each {
                 if (it.filter(ctClass)) {
@@ -60,8 +60,8 @@ public class TransformerTask extends DefaultTask {
 
     }
 
-    ProcessingEnvironment getProcessingEnvironment() {
-        return new ProcessingEnvironmentImp(project)
+    ProcessingEnvironment getProcessingEnvironment(ClassPool pool) {
+        new ProcessingEnvironmentImp(project, pool);
     }
 
     ClassPool createPool() {
@@ -89,10 +89,36 @@ public class TransformerTask extends DefaultTask {
     /**
      * @return Returns all .class files from build directory.
      */
-    Set<File> getClasses() {
+    Set<File> getClassesFiles() {
         return project.fileTree(classesDir).matching {
             include '**/*.class'
         }.files
+    }
+
+    public FileCollection getClasspath() {
+        return classpath
+    }
+
+    public void setClasspath(FileCollection classpath) {
+        this.classpath = classpath
+    }
+
+    @InputDirectory
+    public File getClassesDir() {
+        return classesDir
+    }
+
+    public void setClassesDir(File classesDir) {
+        this.classesDir = classesDir
+    }
+
+    @OutputDirectory
+    public File getOutputDir() {
+        return outputDir
+    }
+
+    public void setOutputDir(File outputDir) {
+        this.outputDir = outputDir
     }
 
     public static class Builder {
@@ -136,31 +162,5 @@ public class TransformerTask extends DefaultTask {
             return task
         }
 
-    }
-
-    public FileCollection getClasspath() {
-        return classpath
-    }
-
-    public void setClasspath(FileCollection classpath) {
-        this.classpath = classpath
-    }
-
-    @InputDirectory
-    public File getClassesDir() {
-        return classesDir
-    }
-
-    public void setClassesDir(File classesDir) {
-        this.classesDir = classesDir
-    }
-
-    @OutputDirectory
-    public File getOutputDir() {
-        return outputDir
-    }
-
-    public void setOutputDir(File outputDir) {
-        this.outputDir = outputDir
     }
 }

@@ -1,5 +1,7 @@
 package weaver.processor;
 
+import weaver.processor.injector.TemplateInjector;
+
 /**
  * The {@code WeaverProcessor} can use facilities provided by this interface during processing.
  *
@@ -7,7 +9,12 @@ package weaver.processor;
  */
 public interface ProcessingEnvironment {
     /**
-     * @return Returns the logger used to report info, warnings, and other notices.
+     * @return Returns the logger.
      */
     Logger getLogger();
+
+    /**
+     * @return Returns the template injector.
+     */
+    TemplateInjector getTemplateInjector();
 }
