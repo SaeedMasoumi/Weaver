@@ -9,7 +9,7 @@ import weaver.processor.WeaverProcessor;
 public class Processor1 extends WeaverProcessor {
 
     @Override
-    public void apply(CtClass ctClass) {
+    public void process(CtClass ctClass) {
         logger.quiet("Apply " + ctClass.getName() + "\n");
     }
 
