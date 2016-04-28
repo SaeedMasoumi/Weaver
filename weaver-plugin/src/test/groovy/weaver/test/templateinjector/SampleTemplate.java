@@ -5,6 +5,14 @@ package weaver.test.templateinjector;
  */
 class SampleTemplate {
 
-    public boolean injectedField = true;
+    public int field1;
+    public int field2 = 2;
 
+    public SampleTemplate() {
+        field1 = -1;
+    }
+
+    public SampleTemplate(int foo) {
+        field1 = foo;
+    }
 }

@@ -5,4 +5,11 @@ package weaver.test.templateinjector;
  */
 class SampleClass {
 
+    public SampleClass() {
+
+    }
+
+    public SampleClass(int foo) {
+
+    }
 }
