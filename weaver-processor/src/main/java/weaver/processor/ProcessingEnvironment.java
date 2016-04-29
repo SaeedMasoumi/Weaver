@@ -1,7 +1,5 @@
 package weaver.processor;
 
-import weaver.processor.injector.TemplateInjector;
-
 /**
  * The {@code WeaverProcessor} can use facilities provided by this interface during processing.
  *
@@ -17,4 +15,9 @@ public interface ProcessingEnvironment {
      * @return Returns the template injector.
      */
     TemplateInjector getTemplateInjector();
+
+    /**
+     * @return Returns the toolkit
+     */
+    Toolkit getToolkit();
 }

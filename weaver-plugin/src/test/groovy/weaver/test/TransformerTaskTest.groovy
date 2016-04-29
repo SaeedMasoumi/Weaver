@@ -14,7 +14,7 @@ class TransformerTaskTest {
 
     //build/
     private static
-    final File BUILD_ROOT = new File(getClass().getResource("/").toURI()).parentFile.parentFile
+    final File BUILD_ROOT = new File(getClass().getResource("/").toURI()).parentFile
     private static
     final File OUTPUT_DIR = new File(BUILD_ROOT.getAbsolutePath() + File.separator + "functionalTest")
     private static

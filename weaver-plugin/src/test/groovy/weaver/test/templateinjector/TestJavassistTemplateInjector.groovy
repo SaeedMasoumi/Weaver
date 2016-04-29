@@ -1,20 +1,20 @@
 package weaver.test.templateinjector
 
-import javassist.CannotCompileException
-import javassist.ClassPool
-import javassist.CtClass
-import javassist.NotFoundException
+import groovy.text.SimpleTemplateEngine
+import javassist.*
+import javassist.expr.ExprEditor
+import javassist.expr.MethodCall
 import org.junit.Before
 import org.junit.Test
 import weaver.plugin.internal.processor.injector.JavassistTemplateInjector
-import weaver.processor.injector.TemplateInjector
+import weaver.processor.TemplateInjector
 
 import java.lang.reflect.Field
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class TestTemplateInjector {
+class TestJavassistTemplateInjector {
     private ClassPool pool
     private CtClass ctSampleClass
     private TemplateInjector templateInjector
@@ -26,7 +26,6 @@ class TestTemplateInjector {
         //to avoid exception while calling toClass()
         ctSampleClass.setName(SampleClass.class.getPackage().getName() + ".ConvertedSampleClass")
         templateInjector = new JavassistTemplateInjector(ClassPool.getDefault())
-
     }
 
     @Test
@@ -49,5 +48,6 @@ class TestTemplateInjector {
         assert getInt("field2", instance).equals(2)
         assert getInt("field1", instanceWithParams).equals(10)
         assert getInt("field2", instanceWithParams).equals(2)
+
     }
 }

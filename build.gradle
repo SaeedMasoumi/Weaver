@@ -34,6 +34,8 @@ subprojects { subproj ->
         targetCompatibility = 1.7
     }
 
-
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+}

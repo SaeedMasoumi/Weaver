@@ -8,7 +8,7 @@ import javassist.CtField;
 import javassist.CtNewConstructor;
 import javassist.NotFoundException;
 import weaver.plugin.internal.exception.FieldAlreadyExistsException;
-import weaver.processor.injector.TemplateInjector;
+import weaver.processor.TemplateInjector;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)

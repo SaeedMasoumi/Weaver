@@ -1,4 +1,4 @@
-package weaver.processor.injector;
+package weaver.processor;
 
 import javassist.CtClass;
 

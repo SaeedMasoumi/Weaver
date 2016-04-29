@@ -8,9 +8,13 @@ import javassist.CtClass;
 public abstract class WeaverProcessor {
 
     protected Logger logger;
+    protected TemplateInjector templateInjector;
+    protected Toolkit toolkit;
 
     public synchronized void init(ProcessingEnvironment env) {
         logger = env.getLogger();
+        templateInjector = env.getTemplateInjector();
+        toolkit = env.getToolkit();
     }
 
     public abstract void process(CtClass ctClass);
