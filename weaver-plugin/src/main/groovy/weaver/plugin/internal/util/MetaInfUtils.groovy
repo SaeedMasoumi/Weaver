@@ -10,7 +10,7 @@ class MetaInfUtils {
 
     static final PROCESSORS_PROP = "META-INF/weaver/processors"
 
-    static def extractProcessorsName(Project project, Set<File> dependencies) {
+    static List<String> extractProcessorsName(Project project, Set<File> dependencies) {
         if (!dependencies) {
             throw new TransformException("TransformerTask ignored [No weaver processor specified]");
         }

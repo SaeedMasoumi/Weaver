@@ -29,26 +29,60 @@ abstract class TransformerTask extends DefaultTask {
     @OutputDirectory
     File outputDir
 
-    private List<WeaverProcessor> processors
+    ClassLoader classLoader
+
+    Set<File> weaverScopeClasspath
+
+    List<WeaverProcessor> processors
+
+    Set<File> classesFiles
 
     @TaskAction
     void startTask() {
-        def weaverScopeJarFiles = WeaverConfigurationScope.getJarFiles(project)
-        if (!weaverScopeJarFiles) {
+        weaverScopeClasspath = WeaverConfigurationScope.getJarFiles(project)
+        if (!weaverScopeClasspath) {
             debug("TransformerTask ignored [No weaver dependency specified]")
             return
         }
-        def processorsNameInMetaInf = MetaInfUtils.extractProcessorsName(project, weaverScopeJarFiles)
+        def processorsNameInMetaInf = MetaInfUtils.extractProcessorsName(project, weaverScopeClasspath)
         if (!processorsNameInMetaInf) {
             debug("TransformerTask ignored [No weaver processor specified in META-INF]")
             return
         }
+        classesFiles = getClassesFiles()
+        classLoader = initClassLoader()
+        processors = initWeaverProcessors(processorsNameInMetaInf)
 
         //weaving
         int time = System.currentTimeMillis()
         weaving()
         int duration = System.currentTimeMillis() - time
         logger.quiet("$name : Weaving takes $duration")
+    }
+
+    ClassLoader initClassLoader() {
+        def urls = weaverScopeClasspath.collect() { it.toURI().toURL() }
+        urls += classpath.getFiles().collect { it.toURI().toURL() }
+        URLClassLoader classLoader = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
+        Thread.currentThread().contextClassLoader = classLoader
+        return classLoader
+    }
+
+    List<WeaverProcessor> initWeaverProcessors(List<String> names) {
+        List<WeaverProcessor> processors = new ArrayList<>()
+        names.each {
+            processors.add(classLoader.loadClass(it).newInstance() as WeaverProcessor)
+        }
+        return processors
+    }
+
+    /**
+     * @return Returns all .class files from build directory.
+     */
+    Set<File> getClassesFiles() {
+        return project.fileTree(classesDir).matching {
+            include '**/*.class'
+        }.files
     }
 
     abstract void weaving()

@@ -2,28 +2,28 @@ package weaver.plugin.task
 
 import javassist.ClassPool
 import javassist.CtClass
+import weaver.plugin.internal.javassist.WeaverClassPool
 import weaver.plugin.internal.processor.ProcessingEnvironmentImp
-import weaver.plugin.internal.util.ProcessorLoader
 import weaver.processor.ProcessingEnvironment
-import weaver.processor.WeaverProcessor
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 public class JavassistTransformerTask extends TransformerTask {
 
+    WeaverClassPool pool
+
     @Override
     void weaving() {
-        final ClassPool pool = createPool();
-        def weaverProcessors = null
+        createPool();
         ProcessingEnvironment env = getProcessingEnvironment(pool)
         //init processors
-        weaverProcessors.each {
+        processors.each {
             it.init(env)
         }
-        getClassesFiles().each {
-            CtClass ctClass = loadClassFile(pool, it)
-            weaverProcessors.each {
+        classesFiles.each {
+            CtClass ctClass = pool.get(it)
+            processors.each {
                 if (it.filter(ctClass)) {
                     ctClass.defrost()
                     it.process(ctClass)
@@ -31,43 +31,16 @@ public class JavassistTransformerTask extends TransformerTask {
                 }
             }
         }
-
-
     }
 
     ProcessingEnvironment getProcessingEnvironment(ClassPool pool) {
         new ProcessingEnvironmentImp(project, pool);
     }
 
-    ClassPool createPool() {
-        ClassPool pool = new ClassPool(true)
-        if (classpath) {
-            classpath.each {
-                pool.appendClassPath(it.toString())
-            }
-        }
-        pool.appendClassPath(classesDir.toString())
-        return pool
+    void createPool() {
+        pool = new WeaverClassPool(classLoader, true)
+        pool.appendClassPath(classpath)
+        pool.appendClassPath(classesDir)
+        pool.appendClassPath(weaverScopeClasspath)
     }
-
-    static CtClass loadClassFile(ClassPool pool, File classFile) throws IOException {
-        InputStream stream = new DataInputStream(new BufferedInputStream(new FileInputStream(classFile)));
-        CtClass clazz = pool.makeClass(stream);
-        stream.close();
-        return clazz;
-    }
-
-//    ArrayList<WeaverProcessor> getProcessors() {
-//        return new ProcessorLoader(project, project.configurations.weaver.files).getProcessors()
-//    }
-
-    /**
-     * @return Returns all .class files from build directory.
-     */
-    Set<File> getClassesFiles() {
-        return project.fileTree(classesDir).matching {
-            include '**/*.class'
-        }.files
-    }
-
 }

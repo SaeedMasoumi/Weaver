@@ -14,6 +14,7 @@ class WeaverConfigurationScope {
      */
     static Set<File> getDependencies(Project project) {
         return getWeaverConfiguration(project).files
+        //TODO remove javassist from returned files
     }
 
     /**
