@@ -3,31 +3,33 @@ package weaver.test
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
-import weaver.plugin.internal.processor.ProcessorLoader
+import weaver.plugin.internal.util.MetaInfUtils
+import weaver.plugin.internal.util.WeaverConfigurationScope
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class ProcessorExtractionTest {
+class WeaverScopeTest {
 
     @Test
-    void "Check classes are loaded from META-INF"() {
+    void "Check classes are extracted from META-INF"() {
 
         Project project = ProjectBuilder.builder().build()
         project.apply plugin: 'java'
+        project.configurations.create("weaver")
         project.repositories {
             jcenter()
             mavenCentral()
             maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         }
         project.dependencies {
-            compile "io.saeid.weaver:sample-processor:0.2-SNAPSHOT"
+            weaver "io.saeid.weaver:sample-processor:0.2-SNAPSHOT"
         }
-
-        ProcessorLoader loader = new ProcessorLoader(project, project.configurations.compile.files)
-        def processors = loader.getProcessors()
-        def names = processors.collect({ it.getClass().getCanonicalName() })
+        def jarFiles = WeaverConfigurationScope.getJarFiles(project)
+        assert jarFiles
+        def names = MetaInfUtils.extractProcessorsName(project, jarFiles)
         assert names.contains("io.saeid.weaver.test.processor.Processor1")
         assert names.contains("io.saeid.weaver.test.processor.Processor2")
+
     }
 }
