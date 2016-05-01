@@ -30,6 +30,5 @@ class WeaverScopeTest {
         def names = MetaInfUtils.extractProcessorsName(project, jarFiles)
         assert names.contains("io.saeid.weaver.test.processor.Processor1")
         assert names.contains("io.saeid.weaver.test.processor.Processor2")
-
     }
 }

@@ -20,6 +20,7 @@ dependencies {
     compile localGroovy()
     compile project(':weaver-processor')
     compile deps.android //TODO provided
+    compile deps.javaRuntimeCompiler
 
     testCompile deps.junit
 

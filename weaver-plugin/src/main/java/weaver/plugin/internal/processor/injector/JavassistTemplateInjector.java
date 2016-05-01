@@ -1,37 +1,56 @@
 package weaver.plugin.internal.processor.injector;
 
+import net.openhft.compiler.CompilerUtils;
+
 import javassist.CannotCompileException;
-import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtNewConstructor;
 import javassist.NotFoundException;
 import weaver.plugin.internal.exception.FieldAlreadyExistsException;
+import weaver.plugin.internal.javassist.WeaverClassPool;
 import weaver.processor.TemplateInjector;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 public class JavassistTemplateInjector implements TemplateInjector {
-    private ClassPool pool;
+    private WeaverClassPool pool;
 
-    public JavassistTemplateInjector(ClassPool pool) {
+    public JavassistTemplateInjector(WeaverClassPool pool) {
         this.pool = pool;
+    }
+
+
+    @Override
+    public void inject(String templateClassName, String templateClassCode, CtClass sourceClass) {
+        try {
+            Class clazz =
+                    CompilerUtils.CACHED_COMPILER.loadFromJava(pool.getClassLoader().getParent(),
+                            templateClassName, templateClassCode);
+            inject(clazz, sourceClass);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void inject(Class templateClass, CtClass sourceCtClass) {
         try {
             CtClass templateCtClass = pool.get(templateClass.getCanonicalName());
-            injectConstructors(templateCtClass, sourceCtClass);
-            injectFields(templateCtClass, sourceCtClass);
-            injectMethods(templateCtClass, sourceCtClass);
+            inject(templateCtClass, sourceCtClass);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void inject(CtClass template, CtClass source)
+            throws Exception {
+        injectConstructors(template, source);
+        injectFields(template, source);
+        injectMethods(template, source);
+    }
     /**
      * Copies all constructors from template class into source class. If same constructor signature
      * exists in both sides, then it will create a <code>weaver__injected__constructor($)</code>

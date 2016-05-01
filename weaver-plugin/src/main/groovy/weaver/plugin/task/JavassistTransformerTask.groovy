@@ -33,7 +33,7 @@ public class JavassistTransformerTask extends TransformerTask {
         }
     }
 
-    ProcessingEnvironment getProcessingEnvironment(ClassPool pool) {
+    ProcessingEnvironment getProcessingEnvironment(WeaverClassPool pool) {
         new ProcessingEnvironmentImp(project, pool);
     }
 

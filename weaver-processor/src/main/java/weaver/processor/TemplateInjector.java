@@ -7,5 +7,7 @@ import javassist.CtClass;
  */
 public interface TemplateInjector {
 
+    void inject(String templateClassName, String templateClassCode, CtClass sourceClass);
+
     void inject(Class templateClass, CtClass sourceClass);
 }
