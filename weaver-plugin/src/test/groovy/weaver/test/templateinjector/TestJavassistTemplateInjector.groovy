@@ -1,11 +1,12 @@
 package weaver.test.templateinjector
 
-import groovy.text.SimpleTemplateEngine
-import javassist.*
-import javassist.expr.ExprEditor
-import javassist.expr.MethodCall
+import javassist.CannotCompileException
+import javassist.ClassPool
+import javassist.CtClass
+import javassist.NotFoundException
 import org.junit.Before
 import org.junit.Test
+import weaver.plugin.internal.javassist.WeaverClassPool
 import weaver.plugin.internal.processor.injector.JavassistTemplateInjector
 import weaver.processor.TemplateInjector
 
@@ -25,7 +26,8 @@ class TestJavassistTemplateInjector {
         ctSampleClass = pool.get(SampleClass.class.getCanonicalName())
         //to avoid exception while calling toClass()
         ctSampleClass.setName(SampleClass.class.getPackage().getName() + ".ConvertedSampleClass")
-        templateInjector = new JavassistTemplateInjector(ClassPool.getDefault())
+        WeaverClassPool pool = new WeaverClassPool(getClass().getClassLoader(), true)
+        templateInjector = new JavassistTemplateInjector(pool)
     }
 
     @Test
