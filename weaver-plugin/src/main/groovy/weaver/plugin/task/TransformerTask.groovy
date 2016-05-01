@@ -37,6 +37,8 @@ abstract class TransformerTask extends DefaultTask {
 
     Set<File> classesFiles
 
+    File weaverTempFolder
+
     @TaskAction
     void startTask() {
         weaverScopeClasspath = WeaverConfigurationScope.getJarFiles(project)
@@ -52,12 +54,14 @@ abstract class TransformerTask extends DefaultTask {
         classesFiles = getClassesFiles()
         classLoader = initClassLoader()
         processors = initWeaverProcessors(processorsNameInMetaInf)
-
+        weaverTempFolder = new File(project.buildDir, "weaver/temp")
         //weaving
         int time = System.currentTimeMillis()
         weaving()
         int duration = System.currentTimeMillis() - time
         logger.quiet("$name : Weaving takes $duration")
+        //remove temp folder
+        removeDirectory(weaverTempFolder)
     }
 
     ClassLoader initClassLoader() {
@@ -85,6 +89,21 @@ abstract class TransformerTask extends DefaultTask {
         }.files
     }
 
+    void removeDirectory(File directory) {
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
+            if (null != files) {
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
+                        removeDirectory(files[i]);
+                    } else {
+                        files[i].delete();
+                    }
+                }
+            }
+        }
+        directory.delete();
+    }
     abstract void weaving()
 
     void debug(String message) {

@@ -1,6 +1,5 @@
 package weaver.plugin.task
 
-import javassist.ClassPool
 import javassist.CtClass
 import weaver.plugin.internal.javassist.WeaverClassPool
 import weaver.plugin.internal.processor.ProcessingEnvironmentImp
@@ -42,5 +41,6 @@ public class JavassistTransformerTask extends TransformerTask {
         pool.appendClassPath(classpath)
         pool.appendClassPath(classesDir)
         pool.appendClassPath(weaverScopeClasspath)
+        pool.setCachedCompiler(weaverTempFolder)
     }
 }

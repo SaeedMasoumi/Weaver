@@ -47,7 +47,7 @@ class WeaverPluginAndroid implements Plugin<Project> {
                 new TransformerTask.Builder()
                         .setClassesDir(javaCompileTask.destinationDir)
                         .setClasspath(classpathFileCollection)
-                        .setOutputDir(project.file("$project.buildDir/intermediates/weaver/$variant.name"))
+                        .setOutputDir(project.file("$project.buildDir/weaver/$variant.name"))
                         .setTaskName(taskName)
                         .build(project)
         transformerTask.mustRunAfter javaCompileTask

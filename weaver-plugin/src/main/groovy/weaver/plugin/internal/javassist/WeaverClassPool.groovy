@@ -3,6 +3,8 @@ package weaver.plugin.internal.javassist
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.Loader
+import net.openhft.compiler.CachedCompiler
+import net.openhft.compiler.CompilerUtils
 import org.gradle.api.file.FileCollection
 
 /**
@@ -12,6 +14,7 @@ class WeaverClassPool extends ClassPool {
 
     private ClassLoader parentClassLoader
     private Loader javassistLoader
+    private CachedCompiler cachedCompiler = CompilerUtils.CACHED_COMPILER
 
     WeaverClassPool(ClassLoader parentClassLoader) {
         this.parentClassLoader = parentClassLoader
@@ -25,6 +28,11 @@ class WeaverClassPool extends ClassPool {
     WeaverClassPool(ClassLoader parentClassLoader, ClassPool parent) {
         super(parent)
         this.parentClassLoader = parentClassLoader
+    }
+
+    void setCachedCompiler(File generatedClassDir) {
+        cachedCompiler = new CachedCompiler(null, generatedClassDir)
+        appendClassPath(generatedClassDir)
     }
 
     @Override
@@ -42,6 +50,12 @@ class WeaverClassPool extends ClassPool {
         CtClass clazz = makeClass(stream);
         stream.close();
         return clazz;
+    }
+
+    CtClass getFromJavaCode(String className, String javaCode) {
+        return get(cachedCompiler
+                .loadFromJava(parentClassLoader, className, javaCode)
+                .getCanonicalName())
     }
 
     void appendClassPath(Set<File> files) {

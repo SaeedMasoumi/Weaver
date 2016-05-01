@@ -1,7 +1,5 @@
 package weaver.plugin.internal.processor.injector;
 
-import net.openhft.compiler.CompilerUtils;
-
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -24,13 +22,11 @@ public class JavassistTemplateInjector implements TemplateInjector {
 
 
     @Override
-    public void inject(String templateClassName, String templateClassCode, CtClass sourceClass) {
+    public void inject(String templateClassName, String templateJavaCode, CtClass sourceClass) {
         try {
-            Class clazz =
-                    CompilerUtils.CACHED_COMPILER.loadFromJava(pool.getClassLoader().getParent(),
-                            templateClassName, templateClassCode);
-            inject(clazz, sourceClass);
-        } catch (ClassNotFoundException e) {
+            CtClass templateCtClass = pool.getFromJavaCode(templateClassName, templateJavaCode);
+            inject(templateCtClass, sourceClass);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

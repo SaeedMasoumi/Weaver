@@ -11,14 +11,6 @@ import weaver.plugin.task.TransformerTask
  */
 class JavassistTransformerTaskTest {
 
-    //build/
-    private static
-    final File BUILD_ROOT = new File(getClass().getResource("/").toURI()).parentFile.parentFile
-    private static
-    final File OUTPUT_DIR = new File(BUILD_ROOT.getAbsolutePath() + File.separator + "functionalTest")
-    private static
-    final File CLASSES_DIR = new File(BUILD_ROOT.getAbsolutePath() + File.separator + "resources" + File.separator + "test" + File.separator + "classes_dir")
-
     @Test
     public void test() {
         Project project = ProjectBuilder.builder().build()
@@ -38,8 +30,8 @@ class JavassistTransformerTaskTest {
         TransformerTask task = new TransformerTask.Builder()
                 .setTaskName("weaverTest")
                 .setClasspath(compileJavaTask.classpath)
-                .setOutputDir(OUTPUT_DIR)
-                .setClassesDir(CLASSES_DIR)
+                .setOutputDir(Directories.OUTPUT_DIR)
+                .setClassesDir(Directories.CLASSES_DIR)
                 .build(project)
         project.tasks.getByName("weaverTest").execute()
 
