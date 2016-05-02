@@ -3,8 +3,8 @@ package weaver.processor;
 import javassist.CtClass;
 
 /**
- * <code>TemplateInjector</code> allows you to inject all declared interfaces, fields,
- * constructors and methods from one class to another class.
+ * <code>TemplateInjector</code> allows you to inject all declared interfaces, fields, constructors
+ * and methods from one class to another class.
  *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
@@ -13,7 +13,7 @@ public interface TemplateInjector {
     /**
      * Injects a text code into a given ctClass.
      * <p>
-     * Also you can use 3rd party libraries like <a href="https://github.com/square/javapoet">JavaPoet</a></a>
+     * Also you can use 3rd party libraries like <a href="https://github.com/square/javapoet">JavaPoet</a>
      * to generate a java code as text representation.
      * <p>
      * For example, If we have this template class:
