@@ -5,5 +5,4 @@ package weaver.processor;
  */
 public interface Toolkit {
 
-    Toolkit changeFieldInitialization(String fieldName);
 }

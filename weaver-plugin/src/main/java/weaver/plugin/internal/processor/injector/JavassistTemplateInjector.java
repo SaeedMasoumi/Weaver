@@ -4,7 +4,9 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
+import javassist.CtMethod;
 import javassist.CtNewConstructor;
+import javassist.CtNewMethod;
 import javassist.NotFoundException;
 import weaver.plugin.internal.exception.FieldAlreadyExistsException;
 import weaver.plugin.internal.javassist.WeaverClassPool;
@@ -43,10 +45,29 @@ public class JavassistTemplateInjector implements TemplateInjector {
 
     private void inject(CtClass template, CtClass source)
             throws Exception {
-        injectConstructors(template, source);
+        source.defrost();
+        injectInterfaces(template, source);
         injectFields(template, source);
+        injectConstructors(template, source);
         injectMethods(template, source);
     }
+
+    /**
+     * Copies all implemented interfaces from template class intro source class. It will not inject
+     * same implemented interfaces.
+     *
+     * @param template Given template CtClass.
+     * @param source   Given source CtClass.
+     * @throws NotFoundException thrown by javassist.
+     */
+    private void injectInterfaces(CtClass template, CtClass source) throws NotFoundException {
+        for (CtClass interfaceClass : template.getInterfaces()) {
+            if (!hasInterface(source, interfaceClass)) {
+                source.addInterface(interfaceClass);
+            }
+        }
+    }
+
     /**
      * Copies all constructors from template class into source class. If same constructor signature
      * exists in both sides, then it will create a <code>weaver__injected__constructor($)</code>
@@ -66,22 +87,20 @@ public class JavassistTemplateInjector implements TemplateInjector {
     private void injectConstructors(CtClass template, CtClass source)
             throws CannotCompileException, NotFoundException {
         for (CtConstructor constructorInTemplate : template.getDeclaredConstructors()) {
-            boolean copiedConstructor = false;
-            String methodName = "weaver__injected__constructor";
+            boolean constructorAdded = false;
+            String methodName = "weaver__injected__constructor__" + constructorInTemplate.getName();
             for (CtConstructor constructorInSource : source.getDeclaredConstructors()) {
-                if (constructorInSource.getSignature()
-                        .equals(constructorInTemplate.getSignature())) {
+
+                if (hasSameConstructor(constructorInSource, constructorInTemplate)) {
                     source.addMethod(
                             constructorInTemplate.toMethod(methodName, source));
                     String string =
-                            methodName +
-                                    getNormalizedParameters(constructorInTemplate) +
-                                    ";\n";
+                            getNormalizedParameters(methodName, constructorInTemplate);
                     constructorInSource.insertAfter(string);
-                    copiedConstructor = true;
+                    constructorAdded = true;
                 }
             }
-            if (!copiedConstructor) {
+            if (!constructorAdded) {
                 source.addConstructor(
                         CtNewConstructor.copy(constructorInTemplate, source, null));
             }
@@ -98,18 +117,34 @@ public class JavassistTemplateInjector implements TemplateInjector {
      */
     private void injectFields(CtClass template, CtClass source) throws Exception {
         for (CtField field : template.getDeclaredFields()) {
-            if (hasField(field, source)) {
-                throw new FieldAlreadyExistsException(
-                        String.format("Class %s already has a field named %s.",
-                                source.getSimpleName(), field.getName()));
-                //TODO support for existing fields
+            if (!hasField(field, source)) {
+                source.addField(new CtField(field, source));
             }
-            source.addField(new CtField(field, source));
         }
     }
 
-    private void injectMethods(CtClass template, CtClass source) {
+    private void injectMethods(CtClass template, CtClass source) throws CannotCompileException {
+        for (CtMethod methodInTemplate : template.getDeclaredMethods()) {
+            boolean sameMethod = false;
+            for (CtMethod methodInSource : source.getDeclaredMethods()) {
+                sameMethod = hasSameMethod(methodInSource, methodInTemplate);
+                if (sameMethod) {
+                    String methodName = "weaver__injected__method__" + methodInTemplate.getName();
+                    source.addMethod(CtNewMethod.copy(methodInTemplate, methodName, source, null));
+                }
+            }
+            if (!sameMethod) {
+                source.addMethod(CtNewMethod.copy(methodInTemplate, source, null));
+            }
+        }
+    }
 
+
+    private boolean hasInterface(CtClass clazz, CtClass interfaze) throws NotFoundException {
+        for (CtClass interfaceClass : clazz.getInterfaces()) {
+            if (interfaze.getName().equals(interfaceClass.getName())) return true;
+        }
+        return false;
     }
 
     private boolean hasField(CtField field, CtClass clazz) {
@@ -121,14 +156,37 @@ public class JavassistTemplateInjector implements TemplateInjector {
         }
     }
 
+    private boolean hasSameMethod(CtMethod mainMethod, CtMethod givenMethod) {
+        return mainMethod.getSignature().equals(givenMethod.getSignature()) &&
+                mainMethod.getName().equals(givenMethod.getName());
+    }
+
+    private boolean hasSameConstructor(CtConstructor mainConstructor,
+                                       CtConstructor givenConstructor) {
+        return mainConstructor.getSignature()
+                .equals(givenConstructor.getSignature());
+    }
+
+    private String getNormalizedParameters(String methodName, CtConstructor constructor)
+            throws NotFoundException {
+        return getNormalizedParameters(methodName, constructor.getParameterTypes());
+    }
+
+    private String getNormalizedParameters(String methodName, CtMethod method)
+            throws NotFoundException {
+        return getNormalizedParameters(methodName, method.getParameterTypes());
+    }
+
+
     /**
      * Converts parameter types of given constructor to normalized form:
      * <p>
-     * <code> ( $1, $1, .... ,$n) </code>
+     * <code> methodName( $1, $1, .... ,$n); </code>
      */
-    private String getNormalizedParameters(CtConstructor constructor) throws NotFoundException {
+    private String getNormalizedParameters(String methodName, CtClass[] parameterTypes) {
         StringBuilder sb = new StringBuilder();
-        int size = constructor.getParameterTypes().length;
+        int size = parameterTypes.length;
+        sb.append(methodName);
         sb.append("(");
         for (int param = 1; param <= size; param++) {
             sb.append(" $");
@@ -138,6 +196,7 @@ public class JavassistTemplateInjector implements TemplateInjector {
             }
         }
         sb.append(")");
+        sb.append(";\n");
         return sb.toString();
     }
 }
