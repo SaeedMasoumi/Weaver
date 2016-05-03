@@ -126,31 +126,32 @@ public class JavassistTemplateInjector implements TemplateInjector {
     private void injectMethods(CtClass template, CtClass source)
             throws CannotCompileException, NotFoundException {
         for (CtMethod methodInTemplate : template.getDeclaredMethods()) {
-            boolean methodInserted = false;
+            boolean IsMethodInserted = false;
             MethodInjectionMode injectionMode = MethodInjectionMode.getType(methodInTemplate);
             for (CtMethod methodInSource : source.getDeclaredMethods()) {
                 if (hasSameMethod(methodInSource, methodInTemplate, injectionMode)) {
                     String methodName = "methodWeaving$$" + methodInTemplate.getName();
                     source.addMethod(CtNewMethod.copy(methodInTemplate, methodName, source, null));
+                    String methodCall = getNormalizedParameters(methodName, methodInTemplate);
                     switch (injectionMode) {
                         case AT_BEGINNING:
-                            methodInSource.insertBefore(
-                                    getNormalizedParameters(methodName, methodInTemplate));
+                            methodInSource.insertBefore(methodCall);
                             break;
                         case BEFORE_RETURN:
-                            methodInSource.insertAfter(
-                                    getNormalizedParameters(methodName, methodInTemplate));
+                            methodInSource.insertAfter(methodCall);
                             break;
+                        default:
+                            MethodExprEditor editor = new MethodExprEditor(injectionMode,methodCall);
+                            methodInSource.instrument(editor);
                     }
-                    methodInserted = true;
+                    IsMethodInserted = true;
                 }
             }
-            if (!methodInserted) {
+            if (!IsMethodInserted) {
                 source.addMethod(CtNewMethod.copy(methodInTemplate, source, null));
             }
         }
     }
-
 
     private boolean hasInterface(CtClass clazz, CtClass interfaze) throws NotFoundException {
         for (CtClass interfaceClass : clazz.getInterfaces()) {

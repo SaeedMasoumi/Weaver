@@ -13,8 +13,7 @@ import weaver.test.Directories
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-import static junit.framework.Assert.assertEquals
-import static junit.framework.Assert.assertTrue
+import static junit.framework.Assert.*
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -42,6 +41,7 @@ class TestJavassistTemplateInjector {
         "inject non-existing constructors"()
         "inject method at beginning"()
         "inject method before return"()
+        "inject method after/before super"()
         //asserting
         Class sampleClass = ctSampleClass.toClass()
         //first constructor
@@ -61,17 +61,28 @@ class TestJavassistTemplateInjector {
             field.setAccessible(true)
             field.getBoolean(ins)
         }
+        def invokeMethod = {
+            String methodName, Object ins, Class<?>... paramsClass ->
+                Method method = sampleClass.getMethod(methodName, paramsClass)
+                method.setAccessible(true)
+                method.invoke(ins)
+        }
         assertEquals(getInt("field1", instance), -1)
         assertEquals(getInt("field1", instanceWithParams), 10)
         assertEquals(getInt("field2", instance), 2)
         assertEquals(getInt("field2", instanceWithParams), 2)
         assertTrue(getBool("field3", instanceWithBoolParams))
         //check method injection
-        Method method = sampleClass.getMethod("methodForInjection")
-        method.setAccessible(true)
-        method.invoke(instance);
+        invokeMethod("methodForInjection", instance)
+        invokeMethod("methodForInjectionWithSuper", instance)
+        invokeMethod("methodForInjectionWithSuper2", instance)
+
         assertTrue(getBool("atBeginning", instance))
         assertTrue(getBool("beforeReturn", instance))
+        assertTrue(getBool("afterSuper", instance))
+        assertFalse(getBool("afterSuper2", instance))
+        assertTrue(getBool("beforeSuper", instance))
+        assertFalse(getBool("beforeSuper2", instance))
         assert instance as Runnable
         assert instanceWithParams as Runnable
     }
@@ -157,6 +168,33 @@ class TestJavassistTemplateInjector {
                 "}\n" +
                 "}";
         templateInjector.inject("io.saeid.weaver.test.templateinject.MethodBeforeReturnTemplate",
+                templateClass, ctSampleClass)
+    }
+
+    void "inject method after/before super"() {
+        String templateClass = "\n" +
+                "package io.saeid.weaver.test.templateinject;" +
+                "class MethodAfterSuperTemplate {\n" +
+                " public boolean afterSuper = false;\n" +
+                " public boolean afterSuper2 = false;\n" +
+                " public boolean beforeSuper = false;\n" +
+                " public boolean beforeSuper2 = false;\n" +
+                " public void methodForInjectionWithSuper\$\$AfterSuper() {\n" +
+                " afterSuper = true;\n" +
+                " System.out.println(\"weaving method called in child after super\");\n" +
+                "}\n" +
+                " public void methodForInjectionWithSuper2\$\$AfterSuper() {\n" +
+                " afterSuper2 = true;\n" +
+                "}\n" +
+                " public void methodForInjectionWithSuper\$\$BeforeSuper() {\n" +
+                " beforeSuper = true;\n" +
+                " System.out.println(\"weaving method called in child before super\");\n" +
+                "}\n" +
+                " public void methodForInjectionWithSuper2\$\$BeforeSuper() {\n" +
+                " beforeSuper2 = true;\n" +
+                "}\n" +
+                "}";
+        templateInjector.inject("io.saeid.weaver.test.templateinject.MethodAfterSuperTemplate",
                 templateClass, ctSampleClass)
     }
 
