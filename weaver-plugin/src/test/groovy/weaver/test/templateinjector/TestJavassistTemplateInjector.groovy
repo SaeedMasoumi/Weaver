@@ -11,8 +11,10 @@ import weaver.processor.TemplateInjector
 import weaver.test.Directories
 
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 
 import static junit.framework.Assert.assertEquals
+import static junit.framework.Assert.assertTrue
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -34,10 +36,12 @@ class TestJavassistTemplateInjector {
     @Test
     void "validate"() {
         //TODO junit sucks, switch to junit5 for @BeforeAll
-        "check interfaces are injected"()
-        "check fields are injected"()
-        "check existing constructor injected"()
-        "check non-existing constructor injected"()
+        "inject interfaces"()
+        "inject fields"()
+        "inject existing constructors"()
+        "inject non-existing constructors"()
+        "inject method at beginning"()
+        "inject method before return"()
         //asserting
         Class sampleClass = ctSampleClass.toClass()
         //first constructor
@@ -61,12 +65,18 @@ class TestJavassistTemplateInjector {
         assertEquals(getInt("field1", instanceWithParams), 10)
         assertEquals(getInt("field2", instance), 2)
         assertEquals(getInt("field2", instanceWithParams), 2)
-        assertEquals(getBool("field3", instanceWithBoolParams), true)
+        assertTrue(getBool("field3", instanceWithBoolParams))
+        //check method injection
+        Method method = sampleClass.getMethod("methodForInjection")
+        method.setAccessible(true)
+        method.invoke(instance);
+        assertTrue(getBool("atBeginning", instance))
+        assertTrue(getBool("beforeReturn", instance))
         assert instance as Runnable
         assert instanceWithParams as Runnable
     }
 
-    void "check interfaces are injected"() {
+    void "inject interfaces"() {
         String templateClass = "\n" +
                 "package io.saeid.weaver.test.templateinject;" +
                 "class InterfaceTemplate implements Runnable{\n" +
@@ -78,7 +88,7 @@ class TestJavassistTemplateInjector {
     }
 
 
-    void "check fields are injected"()
+    void "inject fields"()
             throws IOException, CannotCompileException, NotFoundException, IllegalAccessException,
                     InstantiationException, NoSuchFieldException {
         String templateClass = "\n" +
@@ -97,7 +107,7 @@ class TestJavassistTemplateInjector {
                 templateClass, ctSampleClass)
     }
 
-    void "check existing constructor injected"() {
+    void "inject existing constructors"() {
         String templateClass = "\n" +
                 "package io.saeid.weaver.test.templateinject;" +
                 "class ExistingConstructorTemplate {\n" +
@@ -110,7 +120,7 @@ class TestJavassistTemplateInjector {
                 templateClass, ctSampleClass)
     }
 
-    void "check non-existing constructor injected"() {
+    void "inject non-existing constructors"() {
         String templateClass = "\n" +
                 "package io.saeid.weaver.test.templateinject;" +
                 "class ConstructorTemplate {\n" +
@@ -121,6 +131,32 @@ class TestJavassistTemplateInjector {
                 "}\n" +
                 "}";
         templateInjector.inject("io.saeid.weaver.test.templateinject.ConstructorTemplate",
+                templateClass, ctSampleClass)
+    }
+
+    void "inject method at beginning"() {
+        String templateClass = "\n" +
+                "package io.saeid.weaver.test.templateinject;" +
+                "class MethodAtBeginningTemplate {\n" +
+                " public boolean atBeginning = false;\n" +
+                " public void methodForInjection\$\$AtBeginning() {\n" +
+                " atBeginning = true;\n" +
+                "}\n" +
+                "}";
+        templateInjector.inject("io.saeid.weaver.test.templateinject.MethodAtBeginningTemplate",
+                templateClass, ctSampleClass)
+    }
+
+    void "inject method before return"() {
+        String templateClass = "\n" +
+                "package io.saeid.weaver.test.templateinject;" +
+                "class MethodBeforeReturnTemplate {\n" +
+                " public boolean beforeReturn = false;\n" +
+                " public void methodForInjection\$\$BeforeReturn() {\n" +
+                " beforeReturn = true;\n" +
+                "}\n" +
+                "}";
+        templateInjector.inject("io.saeid.weaver.test.templateinject.MethodBeforeReturnTemplate",
                 templateClass, ctSampleClass)
     }
 

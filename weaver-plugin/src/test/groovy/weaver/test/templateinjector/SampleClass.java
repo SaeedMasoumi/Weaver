@@ -12,4 +12,8 @@ class SampleClass {
     public SampleClass(int foo) {
 
     }
+
+    public void methodForInjection() {
+
+    }
 }

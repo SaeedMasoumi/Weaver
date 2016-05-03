@@ -88,7 +88,7 @@ public class JavassistTemplateInjector implements TemplateInjector {
             throws CannotCompileException, NotFoundException {
         for (CtConstructor constructorInTemplate : template.getDeclaredConstructors()) {
             boolean constructorAdded = false;
-            String methodName = "weaver__injected__constructor__" + constructorInTemplate.getName();
+            String methodName = "constructorWeaving$$" + constructorInTemplate.getName();
             for (CtConstructor constructorInSource : source.getDeclaredConstructors()) {
 
                 if (hasSameConstructor(constructorInSource, constructorInTemplate)) {
@@ -123,17 +123,29 @@ public class JavassistTemplateInjector implements TemplateInjector {
         }
     }
 
-    private void injectMethods(CtClass template, CtClass source) throws CannotCompileException {
+    private void injectMethods(CtClass template, CtClass source)
+            throws CannotCompileException, NotFoundException {
         for (CtMethod methodInTemplate : template.getDeclaredMethods()) {
-            boolean sameMethod = false;
+            boolean methodInserted = false;
+            MethodInjectionMode injectionMode = MethodInjectionMode.getType(methodInTemplate);
             for (CtMethod methodInSource : source.getDeclaredMethods()) {
-                sameMethod = hasSameMethod(methodInSource, methodInTemplate);
-                if (sameMethod) {
-                    String methodName = "weaver__injected__method__" + methodInTemplate.getName();
+                if (hasSameMethod(methodInSource, methodInTemplate, injectionMode)) {
+                    String methodName = "methodWeaving$$" + methodInTemplate.getName();
                     source.addMethod(CtNewMethod.copy(methodInTemplate, methodName, source, null));
+                    switch (injectionMode) {
+                        case AT_BEGINNING:
+                            methodInSource.insertBefore(
+                                    getNormalizedParameters(methodName, methodInTemplate));
+                            break;
+                        case BEFORE_RETURN:
+                            methodInSource.insertAfter(
+                                    getNormalizedParameters(methodName, methodInTemplate));
+                            break;
+                    }
+                    methodInserted = true;
                 }
             }
-            if (!sameMethod) {
+            if (!methodInserted) {
                 source.addMethod(CtNewMethod.copy(methodInTemplate, source, null));
             }
         }
@@ -156,9 +168,10 @@ public class JavassistTemplateInjector implements TemplateInjector {
         }
     }
 
-    private boolean hasSameMethod(CtMethod mainMethod, CtMethod givenMethod) {
+    private boolean hasSameMethod(CtMethod mainMethod, CtMethod givenMethod,
+                                  MethodInjectionMode givenMethodInjectionMode) {
         return mainMethod.getSignature().equals(givenMethod.getSignature()) &&
-                mainMethod.getName().equals(givenMethod.getName());
+                mainMethod.getName().equals(givenMethodInjectionMode.getMethodName());
     }
 
     private boolean hasSameConstructor(CtConstructor mainConstructor,
@@ -199,4 +212,5 @@ public class JavassistTemplateInjector implements TemplateInjector {
         sb.append(";\n");
         return sb.toString();
     }
+
 }
