@@ -7,8 +7,6 @@ import javassist.CtMethod;
  */
 enum MethodInjectionMode {
     AT_BEGINNING,
-    AFTER,
-    BEFORE,
     AFTER_SUPER,
     BEFORE_SUPER,
     BEFORE_RETURN;
@@ -17,11 +15,7 @@ enum MethodInjectionMode {
 
     public static MethodInjectionMode getType(CtMethod method) {
         String methodName = method.getName();
-        if (methodName.endsWith("$$After")) {
-            return create(methodName, "$$After", AFTER);
-        } else if (methodName.endsWith("$$Before")) {
-            return create(methodName, "$$Before", BEFORE);
-        } else if (methodName.endsWith("$$AfterSuper")) {
+        if (methodName.endsWith("$$AfterSuper")) {
             return create(methodName, "$$AfterSuper", AFTER_SUPER);
         } else if (methodName.endsWith("$$BeforeSuper")) {
             return create(methodName, "$$BeforeSuper", BEFORE_SUPER);

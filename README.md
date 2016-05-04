@@ -1,5 +1,5 @@
 # Weaver
-[![Build Status](https://travis-ci.org/SaeedMasoumi/Weaver.svg?branch=master)](https://travis-ci.org/SaeedMasoumi/Weaver)[![codecov](https://codecov.io/gh/SaeedMasoumi/Weaver/branch/master/graph/badge.svg)](https://codecov.io/gh/SaeedMasoumi/Weaver)
+[![Build Status](https://travis-ci.org/SaeedMasoumi/Weaver.svg?branch=master)](https://travis-ci.org/SaeedMasoumi/Weaver) [![codecov](https://codecov.io/gh/SaeedMasoumi/Weaver/branch/master/graph/badge.svg)](https://codecov.io/gh/SaeedMasoumi/Weaver)
 
 
 Gradle plugin with a fluent API for java bytecode manipulation.
@@ -15,15 +15,17 @@ Gradle plugin with a fluent API for java bytecode manipulation.
 
 ## Weaver Plugin
 
-## Usage
+### Usage
 
-## Available Tasks
+### Available Tasks
+
+### Configuration
 
 ## Weaver Processor
 
-## Getting Started
+### Getting Started
 
-## Template Injector
+### Template Injector
 
 ## License
 

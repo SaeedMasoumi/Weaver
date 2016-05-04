@@ -181,14 +181,14 @@ class TestJavassistTemplateInjector {
                 " public boolean beforeSuper2 = false;\n" +
                 " public void methodForInjectionWithSuper\$\$AfterSuper() {\n" +
                 " afterSuper = true;\n" +
-                " System.out.println(\"weaving method called in child after super\");\n" +
+                " System.out.println(this+\" weaving method called in child after super\");\n" +
                 "}\n" +
                 " public void methodForInjectionWithSuper2\$\$AfterSuper() {\n" +
                 " afterSuper2 = true;\n" +
                 "}\n" +
                 " public void methodForInjectionWithSuper\$\$BeforeSuper() {\n" +
                 " beforeSuper = true;\n" +
-                " System.out.println(\"weaving method called in child before super\");\n" +
+                " System.out.println(this+\" weaving method called in child before super\");\n" +
                 "}\n" +
                 " public void methodForInjectionWithSuper2\$\$BeforeSuper() {\n" +
                 " beforeSuper2 = true;\n" +
