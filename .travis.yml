@@ -23,8 +23,9 @@ script:
     - ./gradlew clean assemble test --info
 
 after_success:
-    -  chmod ugo+x .buildscript/deploy_snapshots.sh
+    - chmod ugo+x .buildscript/deploy_snapshots.sh
     - .buildscript/deploy_snapshots.sh
+    - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   email: false
