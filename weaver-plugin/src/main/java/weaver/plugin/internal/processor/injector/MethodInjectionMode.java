@@ -6,37 +6,38 @@ import javassist.CtMethod;
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 enum MethodInjectionMode {
-    AT_BEGINNING,
-    AFTER_SUPER,
-    BEFORE_SUPER,
-    BEFORE_RETURN;
+    AT_BEGINNING("$$AtBeginning"),
+    AFTER_SUPER("$$AfterSuper"),
+    BEFORE_SUPER("$$BeforeSuper"),
+    BEFORE_RETURN("$$BeforeReturn");
 
     private String methodName;
+    private String suffix;
 
-    public static MethodInjectionMode getType(CtMethod method) {
-        String methodName = method.getName();
-        if (methodName.endsWith("$$AfterSuper")) {
-            return create(methodName, "$$AfterSuper", AFTER_SUPER);
-        } else if (methodName.endsWith("$$BeforeSuper")) {
-            return create(methodName, "$$BeforeSuper", BEFORE_SUPER);
-        } else if (methodName.endsWith("$$AtBeginning")) {
-            return create(methodName, "$$AtBeginning", AT_BEGINNING);
-        } else if (methodName.endsWith("$$BeforeReturn")) {
-            return create(methodName, "$$BeforeReturn", BEFORE_RETURN);
-        }
-        return create(methodName, BEFORE_RETURN);
+    MethodInjectionMode(String suffix) {
+        this.suffix = suffix;
     }
 
-    private static MethodInjectionMode create(String methodName, String suffix,
-                                              MethodInjectionMode type) {
-        int index = methodName.indexOf(suffix);
-        type.setMethodName(methodName.substring(0, index));
-        return type;
+    public static MethodInjectionMode getType(CtMethod ctMethod) {
+        String methodName = ctMethod.getName();
+        for (MethodInjectionMode mode : values()) {
+            if (methodName.endsWith(mode.suffix)) {
+                return create(methodName, mode);
+            }
+        }
+        return createDefault(methodName, BEFORE_RETURN);
     }
 
     private static MethodInjectionMode create(String methodName,
                                               MethodInjectionMode type) {
-        type.setMethodName(methodName);
+        int index = methodName.indexOf(type.suffix);
+        type.methodName = methodName.substring(0, index);
+        return type;
+    }
+
+    private static MethodInjectionMode createDefault(String methodName,
+                                                     MethodInjectionMode type) {
+        type.methodName = methodName;
         return type;
     }
 
@@ -44,7 +45,7 @@ enum MethodInjectionMode {
         return methodName;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
+    public String getSuffix() {
+        return suffix;
     }
 }

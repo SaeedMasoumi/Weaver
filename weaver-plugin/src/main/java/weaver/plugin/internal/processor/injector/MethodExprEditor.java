@@ -4,6 +4,8 @@ import javassist.CannotCompileException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
+import static weaver.plugin.internal.processor.injector.MethodInjectionMode.AFTER_SUPER;
+
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
@@ -24,15 +26,20 @@ class MethodExprEditor extends ExprEditor {
         StringBuilder rb = new StringBuilder();
         switch (injectionMode) {
             case AFTER_SUPER:
-                if (!m.isSuper()) return;
-                rb.append(DEFAULT_EXPR).append("\n").append(methodCall);
-                break;
             case BEFORE_SUPER:
                 if (!m.isSuper()) return;
-                rb.append(methodCall).append("\n").append(DEFAULT_EXPR);
+                invokeMethodBeforeOrAfterSuperCall(rb);
                 break;
         }
         m.replace(rb.toString());
         super.edit(m);
+    }
+
+    private void invokeMethodBeforeOrAfterSuperCall(StringBuilder rb) {
+        if (injectionMode.equals(AFTER_SUPER)) {
+            rb.append(DEFAULT_EXPR).append("\n").append(methodCall);
+        } else {
+            rb.append(methodCall).append("\n").append(DEFAULT_EXPR);
+        }
     }
 }

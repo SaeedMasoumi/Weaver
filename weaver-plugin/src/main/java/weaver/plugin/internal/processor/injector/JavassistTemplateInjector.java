@@ -126,31 +126,51 @@ public class JavassistTemplateInjector implements TemplateInjector {
     private void injectMethods(CtClass template, CtClass source)
             throws CannotCompileException, NotFoundException {
         for (CtMethod methodInTemplate : template.getDeclaredMethods()) {
-            boolean IsMethodInserted = false;
             MethodInjectionMode injectionMode = MethodInjectionMode.getType(methodInTemplate);
-            for (CtMethod methodInSource : source.getDeclaredMethods()) {
-                if (hasSameMethod(methodInSource, methodInTemplate, injectionMode)) {
-                    String methodName = "methodWeaving$$" + methodInTemplate.getName();
-                    source.addMethod(CtNewMethod.copy(methodInTemplate, methodName, source, null));
-                    String methodCall = getNormalizedParameters(methodName, methodInTemplate);
-                    switch (injectionMode) {
-                        case AT_BEGINNING:
-                            methodInSource.insertBefore(methodCall);
-                            break;
-                        case BEFORE_RETURN:
-                            methodInSource.insertAfter(methodCall);
-                            break;
-                        default:
-                            MethodExprEditor editor = new MethodExprEditor(injectionMode,methodCall);
-                            methodInSource.instrument(editor);
-                    }
-                    IsMethodInserted = true;
+            methodInTemplate.setName(injectionMode.getMethodName());
+            CtMethod methodInSource = findMethod(methodInTemplate, source.getDeclaredMethods());
+            //method is not included in source
+            if (methodInSource == null) {
+                CtMethod methodInParent = findMethod(methodInTemplate, source.getMethods());
+                //method is not included in source and his parent.
+                if (methodInParent == null) {
+                    methodInSource = CtNewMethod.copy(methodInTemplate, source, null);
+                    source.addMethod(methodInSource);
+                    continue;
+                }
+                //method is not override
+                else {
+                    methodInSource = CtNewMethod.delegator(methodInParent, source);
                 }
             }
-            if (!IsMethodInserted) {
-                source.addMethod(CtNewMethod.copy(methodInTemplate, source, null));
+            //weaving methodInTemplate into methodInSource
+            String methodName =
+                    "methodWeaving$$" + methodInTemplate.getName() + injectionMode.getSuffix();
+            source.addMethod(CtNewMethod.copy(methodInTemplate, methodName, source, null));
+            String methodCall = getNormalizedParameters(methodName, methodInTemplate);
+            switch (injectionMode) {
+                case AT_BEGINNING:
+                    methodInSource.insertBefore(methodCall);
+                    break;
+                case BEFORE_RETURN:
+                    methodInSource.insertAfter(methodCall);
+                    break;
+                default:
+                    MethodExprEditor editor =
+                            new MethodExprEditor(injectionMode, methodCall);
+                    methodInSource.instrument(editor);
             }
         }
+    }
+
+
+    private CtMethod findMethod(CtMethod givenMethod, CtMethod[] methods) {
+        for (CtMethod method : methods) {
+            if (hasSameMethod(givenMethod, method)) {
+                return method;
+            }
+        }
+        return null;
     }
 
     private boolean hasInterface(CtClass clazz, CtClass interfaze) throws NotFoundException {
@@ -169,10 +189,9 @@ public class JavassistTemplateInjector implements TemplateInjector {
         }
     }
 
-    private boolean hasSameMethod(CtMethod mainMethod, CtMethod givenMethod,
-                                  MethodInjectionMode givenMethodInjectionMode) {
+    private boolean hasSameMethod(CtMethod mainMethod, CtMethod givenMethod) {
         return mainMethod.getSignature().equals(givenMethod.getSignature()) &&
-                mainMethod.getName().equals(givenMethodInjectionMode.getMethodName());
+                mainMethod.getName().equals(givenMethod.getName());
     }
 
     private boolean hasSameConstructor(CtConstructor mainConstructor,

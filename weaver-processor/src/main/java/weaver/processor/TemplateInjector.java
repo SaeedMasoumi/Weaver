@@ -35,9 +35,8 @@ import javassist.CtClass;
  * Allowed suffixes for method names are listed below: <ul> <li> <code>methodName$$AtBeginning</code>,
  * add your method at the beginning of the body. </li> <li> <code>methodName$$BeforeReturn</code>
  * (default behaviour, same as <code>methodname</code> without suffix), add your method at the end
- * of the body. </li> </li> <li> <code>methodName$$BeforeSuper</code>, add your method before supper
- * call. </li> <li> <code>methodName$$AfterSuper</code>, add your method after supper call. </li>
- * </ul>
+ * of the body. </li> <li> <code>methodName$$BeforeSuper</code>, add your method before supper call.
+ * </li> <li> <code>methodName$$AfterSuper</code>, add your method after supper call. </li> </ul>
  * <p>
  * If your destination class didn't have same signature of given method in your template class, then
  * weaver will add a new method.
