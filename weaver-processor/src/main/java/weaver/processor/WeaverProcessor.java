@@ -17,7 +17,7 @@ public abstract class WeaverProcessor {
         toolkit = env.getToolkit();
     }
 
-    public abstract void process(CtClass ctClass);
+    public abstract void process(CtClass ctClass) throws Exception;
 
     public abstract boolean filter(CtClass ctClass);
 }

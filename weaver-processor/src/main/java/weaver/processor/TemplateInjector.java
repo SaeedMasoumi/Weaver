@@ -7,11 +7,15 @@ import javassist.CtClass;
  * and methods from one class(template class) to another class(destination class).
  * <p>
  * You can pass your template classes as text or {@link Class}. Passing your template class as text
- * format, gives you some more features: <ul> <li> You can use 3rd party libraries like <a
+ * format, gives you some more features:
+ * <ul>
+ * <li> You can use 3rd party libraries like <a
  * href="https://github.com/square/javapoet">JavaPoet</a> to generate a java code as text
- * representation. </li> <li> If you want to access to an object in your source code that has some
+ * representation.</li>
+ * <li> If you want to access to an object in your source code that has some
  * dependencies to another libraries, you will not need to add those dependencies to your
- * processor's classpath. </li> </ul>
+ * processor's classpath.</li>
+ * </ul>
  * <p>
  * So, how injection works?
  * <p>
@@ -32,14 +36,17 @@ import javassist.CtClass;
  * inject it at the end of the body (before return).  But if you want to inject it at the beginning
  * of the method body then change your method name to <code>void foo$$AtBeginning()</code>.
  * <p>
- * Allowed suffixes for method names are listed below: <ul> <li> <code>methodName$$AtBeginning</code>,
- * add your method at the beginning of the body. </li> <li> <code>methodName$$BeforeReturn</code>
- * (default behaviour, same as <code>methodname</code> without suffix), add your method at the end
- * of the body. </li> <li> <code>methodName$$BeforeSuper</code>, add your method before supper call.
- * </li> <li> <code>methodName$$AfterSuper</code>, add your method after supper call. </li> </ul>
+ * Allowed suffixes for method names are listed below:
+ * <ul>
+ * <li> <code>methodName$$AtBeginning</code>, for injecting at the beginning of the body. </li>
+ * <li> <code>methodName$$BeforeReturn</code> (default behaviour, same as <code>methodname</code> without suffix)
+ * , for injecting at the end of the body. </li>
+ * <li> <code>methodName$$BeforeSuper</code>, for injecting before supper call. </li>
+ * <li> <code>methodName$$AfterSuper</code>, for injecting after supper call. </li>
+ * </ul>
  * <p>
- * If your destination class didn't have same signature of given method in your template class, then
- * weaver will add a new method.
+ * Before injecting, if your destination class didn't have same signature of given method, weaver will add a new method,
+ * otherwise if it's included in parent class but not override, weaver will override it.
  *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
@@ -92,7 +99,8 @@ public interface TemplateInjector {
      * @param templateJavaCode  Your template class as text.
      * @param sourceClass       Given source class.
      */
-    void inject(String templateClassName, String templateJavaCode, CtClass sourceClass);
+    void inject(String templateClassName, String templateJavaCode, CtClass sourceClass)
+            throws Exception;
 
     /**
      * It's similar to {@link #inject(String, String, CtClass)}, but instead of passing a text code,
@@ -101,5 +109,5 @@ public interface TemplateInjector {
      * @param templateClass Given template class.
      * @param sourceClass   Given source class.
      */
-    void inject(Class templateClass, CtClass sourceClass);
+    void inject(Class templateClass, CtClass sourceClass) throws Exception;
 }

@@ -64,14 +64,15 @@ class WeaverClassPool extends ClassPool {
         }
     }
 
-    void appendClassPath(File file) {
-        appendClassPath(file.toString())
-    }
-
     void appendClassPath(FileCollection fileCollection) {
         fileCollection.each {
-            appendClassPath(it.toString())
+            appendClassPath(it)
         }
+    }
+
+    void appendClassPath(File file) {
+        appendClassPath(file.path)
+        CompilerUtils.addClassPath(file.path)
     }
 
 }

@@ -41,6 +41,7 @@ abstract class TransformerTask extends DefaultTask {
 
     @TaskAction
     void startTask() {
+        int time = System.currentTimeMillis()
         weaverScopeClasspath = WeaverConfigurationScope.getJarFiles(project)
         if (!weaverScopeClasspath) {
             debug("TransformerTask ignored [No weaver dependency specified]")
@@ -56,7 +57,6 @@ abstract class TransformerTask extends DefaultTask {
         processors = initWeaverProcessors(processorsNameInMetaInf)
         weaverTempFolder = new File(project.buildDir, "weaver/temp")
         //weaving
-        int time = System.currentTimeMillis()
         weaving()
         int duration = System.currentTimeMillis() - time
         logger.quiet("$name : Weaving takes $duration")
@@ -67,6 +67,7 @@ abstract class TransformerTask extends DefaultTask {
     ClassLoader initClassLoader() {
         def urls = weaverScopeClasspath.collect() { it.toURI().toURL() }
         urls += classpath.getFiles().collect { it.toURI().toURL() }
+        urls += classesDir.toURI().toURL()
         URLClassLoader classLoader = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
         Thread.currentThread().contextClassLoader = classLoader
         return classLoader
@@ -104,6 +105,7 @@ abstract class TransformerTask extends DefaultTask {
         }
         directory.delete();
     }
+
     abstract void weaving()
 
     void debug(String message) {

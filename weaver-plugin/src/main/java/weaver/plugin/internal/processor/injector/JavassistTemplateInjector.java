@@ -24,23 +24,16 @@ public class JavassistTemplateInjector implements TemplateInjector {
 
 
     @Override
-    public void inject(String templateClassName, String templateJavaCode, CtClass sourceClass) {
-        try {
-            CtClass templateCtClass = pool.getFromJavaCode(templateClassName, templateJavaCode);
-            inject(templateCtClass, sourceClass);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void inject(String templateClassName, String templateJavaCode, CtClass sourceClass)
+            throws Exception {
+        CtClass templateCtClass = pool.getFromJavaCode(templateClassName, templateJavaCode);
+        inject(templateCtClass, sourceClass);
     }
 
     @Override
-    public void inject(Class templateClass, CtClass sourceCtClass) {
-        try {
-            CtClass templateCtClass = pool.get(templateClass.getCanonicalName());
-            inject(templateCtClass, sourceCtClass);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void inject(Class templateClass, CtClass sourceCtClass) throws Exception {
+        CtClass templateCtClass = pool.get(templateClass.getCanonicalName());
+        inject(templateCtClass, sourceCtClass);
     }
 
     private void inject(CtClass template, CtClass source)
