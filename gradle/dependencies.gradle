@@ -3,7 +3,7 @@ ext.deps = [
         android            : "com.android.tools.build:gradle:2.0.0",
         groovy             : "org.codehaus.groovy:groovy-all:2.4.1",
         groovyAndroidPlugin: "org.codehaus.groovy:gradle-groovy-android-plugin:0.3.8",
-        javaRuntimeCompiler: "net.openhft:compiler:2.2.1",
+        javaRuntimeCompiler: "net.openhft:compiler:2.2.4",
 
         junit              : "junit:junit:4.11",
         easyMock           : "org.easymock:easymock:3.4",
