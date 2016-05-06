@@ -2,25 +2,20 @@ package weaver.plugin.internal.processor
 
 import org.gradle.api.Project
 import weaver.plugin.internal.javassist.WeaverClassPool
-import weaver.plugin.internal.processor.injector.JavassistTemplateInjector
-import weaver.plugin.internal.processor.toolkit.JavassistToolkit
 import weaver.processor.Logger
 import weaver.processor.ProcessingEnvironment
-import weaver.processor.TemplateInjector
-import weaver.processor.Toolkit
+import weaver.toolkit.WeaverToolkit
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 class ProcessingEnvironmentImp implements ProcessingEnvironment {
     private Logger logger
-    private TemplateInjector templateInjector
-    private Toolkit toolkit
+    private WeaverToolkit weaverToolkit;
 
     ProcessingEnvironmentImp(Project project, WeaverClassPool pool) {
         logger = new LoggerImp(project.logger)
-        templateInjector = new JavassistTemplateInjector(pool)
-        toolkit = new JavassistToolkit()
+        weaverToolkit = new WeaverToolkit(pool)
     }
 
     @Override
@@ -29,12 +24,7 @@ class ProcessingEnvironmentImp implements ProcessingEnvironment {
     }
 
     @Override
-    TemplateInjector getTemplateInjector() {
-        return templateInjector
-    }
-
-    @Override
-    Toolkit getToolkit() {
-        return toolkit
+    WeaverToolkit getWeaverToolkit() {
+        return weaverToolkit
     }
 }

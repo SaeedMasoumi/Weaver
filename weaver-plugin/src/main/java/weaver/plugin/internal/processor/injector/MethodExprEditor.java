@@ -9,7 +9,7 @@ import static weaver.plugin.internal.processor.injector.MethodInjectionMode.AFTE
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-
+@Deprecated
 class MethodExprEditor extends ExprEditor {
     private static final String DEFAULT_EXPR = "$_ = $proceed($$);";
 

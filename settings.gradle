@@ -11,3 +11,5 @@ rootProject.children.each { project ->
         project.name = project.name.substring(slash + 1)
     }
 }
+include 'weaver-toolkit'
+

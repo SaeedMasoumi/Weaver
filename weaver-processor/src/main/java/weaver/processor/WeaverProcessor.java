@@ -1,6 +1,7 @@
 package weaver.processor;
 
 import javassist.CtClass;
+import weaver.toolkit.WeaverToolkit;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -8,13 +9,11 @@ import javassist.CtClass;
 public abstract class WeaverProcessor {
 
     protected Logger logger;
-    protected TemplateInjector templateInjector;
-    protected Toolkit toolkit;
+    protected WeaverToolkit weaverToolkit;
 
     public synchronized void init(ProcessingEnvironment env) {
         logger = env.getLogger();
-        templateInjector = env.getTemplateInjector();
-        toolkit = env.getToolkit();
+        weaverToolkit = env.getWeaverToolkit();
     }
 
     public abstract void process(CtClass ctClass) throws Exception;

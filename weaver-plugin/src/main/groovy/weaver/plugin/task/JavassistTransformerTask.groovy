@@ -41,6 +41,5 @@ public class JavassistTransformerTask extends TransformerTask {
         pool.appendClassPath(classpath)
         pool.appendClassPath(classesDir)
         pool.appendClassPath(weaverScopeClasspath)
-        pool.setCachedCompiler(weaverTempFolder)
     }
 }

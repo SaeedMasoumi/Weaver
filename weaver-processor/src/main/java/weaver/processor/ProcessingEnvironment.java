@@ -1,5 +1,7 @@
 package weaver.processor;
 
+import weaver.toolkit.WeaverToolkit;
+
 /**
  * The {@code WeaverProcessor} can use facilities provided by this interface during processing.
  *
@@ -12,12 +14,8 @@ public interface ProcessingEnvironment {
     Logger getLogger();
 
     /**
-     * @return Returns the template injector.
+     * @return Returns the template toolkit.
      */
-    TemplateInjector getTemplateInjector();
+    WeaverToolkit getWeaverToolkit();
 
-    /**
-     * @return Returns the toolkit
-     */
-    Toolkit getToolkit();
 }

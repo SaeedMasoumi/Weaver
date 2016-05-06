@@ -37,8 +37,6 @@ abstract class TransformerTask extends DefaultTask {
 
     Set<File> classesFiles
 
-    File weaverTempFolder
-
     @TaskAction
     void startTask() {
         int time = System.currentTimeMillis()
@@ -55,13 +53,11 @@ abstract class TransformerTask extends DefaultTask {
         classesFiles = getClassesFiles()
         classLoader = initClassLoader()
         processors = initWeaverProcessors(processorsNameInMetaInf)
-        weaverTempFolder = new File(project.buildDir, "weaver/temp")
         //weaving
         weaving()
         int duration = System.currentTimeMillis() - time
         logger.quiet("$name : Weaving takes $duration")
         //remove temp folder
-        removeDirectory(weaverTempFolder)
     }
 
     ClassLoader initClassLoader() {

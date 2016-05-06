@@ -5,6 +5,7 @@ import javassist.CtMethod;
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
+@Deprecated
 enum MethodInjectionMode {
     AT_BEGINNING("$$AtBeginning"),
     AFTER_SUPER("$$AfterSuper"),
