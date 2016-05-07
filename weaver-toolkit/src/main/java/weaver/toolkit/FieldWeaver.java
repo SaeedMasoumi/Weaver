@@ -11,7 +11,7 @@ public class FieldWeaver extends BytecodeWeaver<ClassWeaver> {
     private int modifier = 0;
     private String fieldQualifiedName;
     private String fieldName = "weaver";
-    private String initializer = "";
+    private boolean instantiateIt = false;
 
     FieldWeaver(ClassWeaver classWeaver) {
         super(classWeaver);
@@ -33,7 +33,7 @@ public class FieldWeaver extends BytecodeWeaver<ClassWeaver> {
     }
 
     public FieldWeaver instantiateIt() {
-        this.initializer = "new " + fieldQualifiedName + "()";
+        this.instantiateIt = true;
         return this;
     }
 
@@ -43,10 +43,10 @@ public class FieldWeaver extends BytecodeWeaver<ClassWeaver> {
         CtClass ctClass = getCtClass();
         CtField field = new CtField(fieldType, fieldName, ctClass);
         field.setModifiers(modifier);
-        if (initializer.isEmpty()) {
+        if (!instantiateIt) {
             ctClass.addField(field);
         } else {
-            ctClass.addField(field, initializer);
+            ctClass.addField(field, "new " + fieldQualifiedName + "()");
         }
     }
 

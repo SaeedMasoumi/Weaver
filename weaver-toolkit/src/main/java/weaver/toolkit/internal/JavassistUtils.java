@@ -22,14 +22,6 @@ public final class JavassistUtils {
         return false;
     }
 
-    public static boolean isInterface(CtClass ctClass) {
-        return Modifier.isInterface(ctClass.getModifiers());
-    }
-
-    public static boolean isAbstract(CtClass ctClass) {
-        return Modifier.isAbstract(ctClass.getModifiers());
-    }
-
     public static boolean hasField(CtClass ctClass, String fieldName) {
         for (CtField field : ctClass.getDeclaredFields()) {
             if (field.getName().equals(fieldName)) return true;

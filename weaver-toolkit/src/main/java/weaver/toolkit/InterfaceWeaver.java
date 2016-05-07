@@ -1,12 +1,12 @@
 package weaver.toolkit;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import javassist.CtClass;
 import weaver.toolkit.exception.InterfaceConflictException;
 
 import static weaver.toolkit.internal.JavassistUtils.hasInterface;
-import static weaver.toolkit.internal.JavassistUtils.isInterface;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -32,7 +32,7 @@ public class InterfaceWeaver extends BytecodeWeaver<ClassWeaver> {
         CtClass ctClass = getCtClass();
         for (String qualifiedName : qualifiedNames) {
             CtClass interfaceCtClass = getPool().get(qualifiedName);
-            if (!isInterface(interfaceCtClass)) {
+            if (!Modifier.isInterface(interfaceCtClass.getModifiers())) {
                 throw new InterfaceConflictException("InterfaceWeaver: Tried to weave " +
                         interfaceCtClass.getName() +
                         " but it's not an interface. ");

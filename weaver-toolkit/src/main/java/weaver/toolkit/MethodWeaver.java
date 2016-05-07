@@ -18,6 +18,7 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
 
     private String[] parameters = null;
     private MethodNotExistsState methodNotExistsState = null;
+    private MethodExistsButNotOverrideState overrideState = null;
 
     MethodWeaver(ClassWeaver classWeaver, String methodName, String[] parameters) {
         super(classWeaver);
@@ -25,15 +26,16 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
         this.parameters = parameters;
     }
 
-    public MethodExistsState ifMethodExists() {
+    public MethodExistsState ifExists() {
         return new MethodExistsState(this);
     }
 
-    public MethodExistsButNotOverrideState ifMethodExistsButNotOverride() {
-        return new MethodExistsButNotOverrideState(this);
+    public MethodExistsButNotOverrideState ifExistsButNotOverride() {
+        overrideState = new MethodExistsButNotOverrideState(this);
+        return overrideState;
     }
 
-    public MethodNotExistsState createMethodIfNotExists() {
+    public MethodNotExistsState createIfNotExists() {
         methodNotExistsState = new MethodNotExistsState(this);
         return methodNotExistsState;
     }
@@ -45,12 +47,20 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
         CtMethod methodInParent = findMethod(methodName, parameters, allMethods);
         CtMethod methodInClass = findMethod(methodName, parameters, declaredMethods);
         //method not exists
+        CtMethod method = null;
         if (methodInParent == null && methodInClass == null && methodNotExistsState != null) {
-            CtMethod method = CtNewMethod.make(methodNotExistsState.buildMethod(), getCtClass());
-            getCtClass().addMethod(method);
+            method = CtNewMethod.make(methodNotExistsState.buildMethod(), getCtClass());
         }
         //if method exists but not override
+        else if (methodInParent != null && methodInClass == null && overrideState != null) {
+            method = CtNewMethod.make(methodInParent.getReturnType(), methodInParent.getName(),
+                    methodInParent.getParameterTypes(), methodInParent.getExceptionTypes(),
+                    overrideState.getBody(),
+                    getCtClass());
+            method.setModifiers(methodInParent.getModifiers() & ~Modifier.ABSTRACT);
+        }
         //if method exists
+        if (method != null) getCtClass().addMethod(method);
     }
 
     private String[] getParameters() {
@@ -142,13 +152,24 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
 
     public static class MethodExistsButNotOverrideState extends BytecodeWeaver<MethodWeaver> {
 
+        private String body = "";
+
         MethodExistsButNotOverrideState(MethodWeaver methodWeaver) {
             super(methodWeaver);
+        }
+
+        public MethodExistsButNotOverrideState override(String body) {
+            this.body = body;
+            return this;
         }
 
         @Override
         protected void weaving() throws Exception {
 
+        }
+
+        private String getBody() {
+            return body;
         }
     }
 }

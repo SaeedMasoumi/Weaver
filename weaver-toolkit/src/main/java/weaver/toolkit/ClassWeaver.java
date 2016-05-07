@@ -26,11 +26,11 @@ public class ClassWeaver implements ResourceBundle {
         return new FieldWeaver(this);
     }
 
-    public MethodWeaver inMethod(String methodName) {
-        return inMethod(methodName, new String[0]);
+    public MethodWeaver insertMethod(String methodName) {
+        return insertMethod(methodName, new String[0]);
     }
 
-    public MethodWeaver inMethod(String methodName, String... parameters) {
+    public MethodWeaver insertMethod(String methodName, String... parameters) {
         return new MethodWeaver(this, methodName, parameters);
     }
 

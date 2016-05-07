@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -18,6 +20,22 @@ public abstract class WeavingSpec {
 
     protected WeaverToolkit toolkit;
     protected CtClass ctClass;
+
+    protected <T> T invokeMethod(Class<T> type, String methodName,
+                                 Object instance) {
+        try {
+            Method method = instance.getClass().getMethod(methodName);
+            method.setAccessible(true);
+            return (T) method.invoke(instance);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Before
     public void initClassPool() throws NotFoundException {
