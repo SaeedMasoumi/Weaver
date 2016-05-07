@@ -8,7 +8,7 @@ import javassist.CtClass;
  */
 abstract class BytecodeWeaver<Parent extends ResourceBundle> implements ResourceBundle {
 
-    private Parent parent;
+    protected Parent parent;
 
     BytecodeWeaver(Parent parent) {
         this.parent = parent;
@@ -30,6 +30,5 @@ abstract class BytecodeWeaver<Parent extends ResourceBundle> implements Resource
         weaving();
         return parent;
     }
-
 
 }

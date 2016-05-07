@@ -16,7 +16,7 @@ public class InterfaceWeavingTest extends WeavingSpec {
     public void make_sure_interfaces_are_injected_into_class()
             throws Exception {
         toolkit.startWeaving(ctClass)
-                .addInterface()
+                .insertInterface()
                 .name(SampleInterface.class.getCanonicalName())
                 .name(SampleInterface2.class.getCanonicalName())
                 .done();

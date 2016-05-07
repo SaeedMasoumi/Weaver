@@ -53,7 +53,7 @@ public class JavassistTemplateInjector {
 //    private void injectInterfaces(CtClass template, CtClass source) throws NotFoundException {
 //        for (CtClass interfaceClass : template.getInterfaces()) {
 //            if (!hasInterface(source, interfaceClass)) {
-//                source.addInterface(interfaceClass);
+//                source.insertInterface(interfaceClass);
 //            }
 //        }
 //    }
@@ -109,7 +109,7 @@ public class JavassistTemplateInjector {
 //    private void injectFields(CtClass template, CtClass source) throws Exception {
 //        for (CtField field : template.getDeclaredFields()) {
 //            if (!hasField(field, source)) {
-//                source.addField(new CtField(field, source));
+//                source.insertField(new CtField(field, source));
 //            }
 //        }
 //    }

@@ -17,17 +17,26 @@ public class FieldWeavingTest extends WeavingSpec {
 
     @Test
     public void test_filed_injection()
-            throws Exception{
+            throws Exception {
         toolkit.startWeaving(ctClass)
-                .addField()
-                .modifier(Modifier.PUBLIC)
-                .type(Point.class.getCanonicalName())
-                .name("point")
-                .newInstance()
-                .done();
-        Field field = ctClass.toClass().getField("point");
-        assertNotNull(field);
-        assertEquals(field.getName(), "point");
+                .insertField()
+                    .modifiers(Modifier.PUBLIC)
+                    .type(Point.class.getCanonicalName())
+                    .name("point")
+                    .done()
+                .insertField()
+                    .modifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                    .type(Point.class.getCanonicalName())
+                    .name("pointFinal")
+                    .instantiateIt()
+                    .done();
+        Class clazz = ctClass.toClass();
+        Field point = clazz.getField("point");
+        Field pointFinal = clazz.getField("pointFinal");
+        assertNotNull(point);
+        assertEquals(point.getName(), "point");
+        assertNotNull(pointFinal);
+        assertEquals(pointFinal.getName(), "pointFinal");
 
     }
 

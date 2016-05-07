@@ -18,12 +18,20 @@ public class ClassWeaver implements ResourceBundle {
         this.pool = new WeakReference<>(pool);
     }
 
-    public InterfaceWeaver addInterface() {
+    public InterfaceWeaver insertInterface() {
         return new InterfaceWeaver(this);
     }
 
-    public FieldWeaver addField() {
+    public FieldWeaver insertField() {
         return new FieldWeaver(this);
+    }
+
+    public MethodWeaver inMethod(String methodName) {
+        return inMethod(methodName, new String[0]);
+    }
+
+    public MethodWeaver inMethod(String methodName, String... parameters) {
+        return new MethodWeaver(this, methodName, parameters);
     }
 
     @Override

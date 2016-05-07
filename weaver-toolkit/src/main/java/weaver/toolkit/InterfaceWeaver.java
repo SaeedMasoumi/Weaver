@@ -28,7 +28,7 @@ public class InterfaceWeaver extends BytecodeWeaver<ClassWeaver> {
 
     @Override
     protected void weaving() throws Exception {
-        //TODO check modifiers, e.g. different package names with private modifier is not allowed.
+        //TODO check modifiers, e.g. different package names with private modifiers is not allowed.
         CtClass ctClass = getCtClass();
         for (String qualifiedName : qualifiedNames) {
             CtClass interfaceCtClass = getPool().get(qualifiedName);
