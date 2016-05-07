@@ -6,6 +6,9 @@ package weaver.toolkit.test.weaving.method;
 public class ParentActivity extends AncestorActivity {
 
 
+    public void onCreate(Bundle bundle){
+
+    }
     protected void onResume(Bundle bundle) {
         System.out.println("onResume in parentActivity");
     }

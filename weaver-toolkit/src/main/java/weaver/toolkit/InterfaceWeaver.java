@@ -4,7 +4,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import javassist.CtClass;
-import weaver.toolkit.exception.InterfaceConflictException;
 
 import static weaver.toolkit.internal.JavassistUtils.hasInterface;
 
@@ -33,7 +32,7 @@ public class InterfaceWeaver extends BytecodeWeaver<ClassWeaver> {
         for (String qualifiedName : qualifiedNames) {
             CtClass interfaceCtClass = getPool().get(qualifiedName);
             if (!Modifier.isInterface(interfaceCtClass.getModifiers())) {
-                throw new InterfaceConflictException("InterfaceWeaver: Tried to weave " +
+                throw new Exception("InterfaceWeaver: Tried to weave " +
                         interfaceCtClass.getName() +
                         " but it's not an interface. ");
             }

@@ -2,6 +2,9 @@ package weaver.toolkit;
 
 import javassist.CtClass;
 import javassist.CtField;
+import javassist.CtNewMethod;
+
+import static weaver.toolkit.internal.StringUtils.capitalize;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -12,9 +15,13 @@ public class FieldWeaver extends BytecodeWeaver<ClassWeaver> {
     private String fieldQualifiedName;
     private String fieldName = "weaver";
     private boolean instantiateIt = false;
+    private boolean addSetter = false;
+    private boolean addGetter = false;
+    private String instantiateValue = "";
 
-    FieldWeaver(ClassWeaver classWeaver) {
+    FieldWeaver(ClassWeaver classWeaver, String name) {
         super(classWeaver);
+        this.fieldName = name;
     }
 
     public FieldWeaver modifiers(int... modifiers) {
@@ -27,13 +34,24 @@ public class FieldWeaver extends BytecodeWeaver<ClassWeaver> {
         return this;
     }
 
-    public FieldWeaver name(String fieldName) {
-        this.fieldName = fieldName;
+
+    public FieldWeaver addSetter() {
+        addSetter = true;
+        return this;
+    }
+
+    public FieldWeaver addGetter() {
+        addGetter = true;
         return this;
     }
 
     public FieldWeaver instantiateIt() {
         this.instantiateIt = true;
+        return this;
+    }
+
+    public FieldWeaver instantiate(String value) {
+        this.instantiateValue = value;
         return this;
     }
 
@@ -43,10 +61,18 @@ public class FieldWeaver extends BytecodeWeaver<ClassWeaver> {
         CtClass ctClass = getCtClass();
         CtField field = new CtField(fieldType, fieldName, ctClass);
         field.setModifiers(modifier);
-        if (!instantiateIt) {
-            ctClass.addField(field);
-        } else {
+        if (!instantiateValue.isEmpty()) {
+            ctClass.addField(field, instantiateValue);
+        } else if (instantiateIt) {
             ctClass.addField(field, "new " + fieldQualifiedName + "()");
+        } else {
+            ctClass.addField(field);
+        }
+        if (addSetter) {
+            ctClass.addMethod(CtNewMethod.setter("set" + capitalize(fieldName), field));
+        }
+        if (addGetter) {
+            ctClass.addMethod(CtNewMethod.getter("get" + capitalize(fieldName), field));
         }
     }
 

@@ -21,22 +21,6 @@ public abstract class WeavingSpec {
     protected WeaverToolkit toolkit;
     protected CtClass ctClass;
 
-    protected <T> T invokeMethod(Class<T> type, String methodName,
-                                 Object instance) {
-        try {
-            Method method = instance.getClass().getMethod(methodName);
-            method.setAccessible(true);
-            return (T) method.invoke(instance);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     @Before
     public void initClassPool() throws NotFoundException {
         ClassPool pool = ClassPool.getDefault();
@@ -48,6 +32,27 @@ public abstract class WeavingSpec {
     protected abstract String getSampleClassName();
 
     protected abstract String getTransformedName();
+
+    protected <T> T invokeMethod(Class<T> returnType, String methodName,
+                                 Object instance) {
+        return invokeMethod(returnType, methodName, instance, null, null);
+    }
+
+    protected <T> T invokeMethod(Class<T> returnType, String methodName,
+                                 Object instance, Class<?>[] params,Object[] args) {
+        try {
+            Method method = instance.getClass().getMethod(methodName, params);
+            method.setAccessible(true);
+            return (T) method.invoke(instance, args);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @After
     public void storeCtClass() throws CannotCompileException, IOException {

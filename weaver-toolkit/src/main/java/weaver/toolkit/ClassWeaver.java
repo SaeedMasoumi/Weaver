@@ -22,8 +22,8 @@ public class ClassWeaver implements ResourceBundle {
         return new InterfaceWeaver(this);
     }
 
-    public FieldWeaver insertField() {
-        return new FieldWeaver(this);
+    public FieldWeaver insertField(String name) {
+        return new FieldWeaver(this,name);
     }
 
     public MethodWeaver insertMethod(String methodName) {

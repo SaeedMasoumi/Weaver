@@ -31,9 +31,8 @@ public class MethodExistsButNotOverrideTest extends WeavingSpec {
                 .done()
                 .done()
                 //insert a private field
-                .insertField()
+                .insertField("delegate")
                 .instantiateIt()
-                .name("delegate")
                 .type(Delegate_MyClass.class.getCanonicalName())
                 .modifiers(Modifier.PRIVATE)
                 .done()

@@ -19,10 +19,9 @@ public class MethodNotExistsTest extends WeavingSpec {
     @Test
     public void make_sure_all_different_behaviours_are_injected() throws Exception {
         toolkit.startWeaving(ctClass)
-                .insertField()
+                .insertField("conditionField")
                 .modifiers(Modifier.PRIVATE)
                 .type(Condition.class.getCanonicalName())
-                .name("conditionField")
                 .instantiateIt()
                 .done()
                 .insertMethod("methodNotExistsWithoutParams")

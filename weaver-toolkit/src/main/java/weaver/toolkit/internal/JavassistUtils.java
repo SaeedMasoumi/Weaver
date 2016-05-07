@@ -6,7 +6,6 @@ import java.util.List;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
-import javassist.Modifier;
 import javassist.NotFoundException;
 
 /**

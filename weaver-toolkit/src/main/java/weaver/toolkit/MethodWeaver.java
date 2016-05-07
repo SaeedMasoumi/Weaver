@@ -1,5 +1,7 @@
 package weaver.toolkit;
 
+import java.util.ArrayList;
+
 import javassist.CannotCompileException;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
@@ -19,6 +21,7 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
     private String[] parameters = null;
     private MethodNotExistsState methodNotExistsState = null;
     private MethodExistsButNotOverrideState overrideState = null;
+    private MethodExistsState existsState = null;
 
     MethodWeaver(ClassWeaver classWeaver, String methodName, String[] parameters) {
         super(classWeaver);
@@ -27,7 +30,8 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
     }
 
     public MethodExistsState ifExists() {
-        return new MethodExistsState(this);
+        existsState = new MethodExistsState(this);
+        return existsState;
     }
 
     public MethodExistsButNotOverrideState ifExistsButNotOverride() {
@@ -60,6 +64,23 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
             method.setModifiers(methodInParent.getModifiers() & ~Modifier.ABSTRACT);
         }
         //if method exists
+        else if (methodInClass != null && existsState != null) {
+            for (MethodInjection methodInjection : existsState.getMethodInjections()) {
+                switch (methodInjection) {
+                    case AT_THE_BEGINNING:
+                        methodInClass.insertBefore(methodInjection.getBody());
+                        break;
+                    case BEFORE_SUPER:
+                    case AFTER_SUPER:
+                        MethodExprEditor editor = new MethodExprEditor(methodInjection);
+                        methodInClass.instrument(editor);
+                        break;
+                    case AT_THE_END:
+                        methodInClass.insertAfter(methodInjection.getBody());
+                        break;
+                }
+            }
+        }
         if (method != null) getCtClass().addMethod(method);
     }
 
@@ -73,13 +94,67 @@ public class MethodWeaver extends BytecodeWeaver<ClassWeaver> {
 
     public static class MethodExistsState extends BytecodeWeaver<MethodWeaver> {
 
+        private ArrayList<MethodInjection> methodInjections = new ArrayList<>();
+
         MethodExistsState(MethodWeaver methodWeaver) {
             super(methodWeaver);
         }
 
+        public MethodInsertion atTheBeginning() {
+            return new MethodInsertion(this, MethodInjection.AT_THE_BEGINNING);
+        }
+
+        public MethodInsertion atTheEnd() {
+            return new MethodInsertion(this, MethodInjection.AT_THE_END);
+        }
+
+        public MethodInsertion afterSuper() {
+            return new MethodInsertion(this, MethodInjection.AFTER_SUPER);
+        }
+
+        public MethodInsertion beforeSuper() {
+            return new MethodInsertion(this, MethodInjection.BEFORE_SUPER);
+        }
+
+        //        public MethodInsertion afterACallTo() {
+        //
+        //        }
+        //
+        //        public MethodInsertion beforeACallTo() {
+        //
+        //        }
+
         @Override
         protected void weaving() throws Exception {
 
+        }
+
+        void addNewCall(MethodInjection type) {
+            methodInjections.add(type);
+        }
+
+        public ArrayList<MethodInjection> getMethodInjections() {
+            return methodInjections;
+        }
+    }
+
+    public static class MethodInsertion extends BytecodeWeaver<MethodExistsState> {
+
+        private MethodInjection type;
+
+        MethodInsertion(MethodExistsState methodExistsState, MethodInjection type) {
+            super(methodExistsState);
+            this.type = type;
+        }
+
+        public MethodExistsState withBody(String body) throws Exception {
+            type.setBody(body);
+            return done();
+        }
+
+        @Override
+        protected void weaving() throws Exception {
+            parent.addNewCall(type);
         }
     }
 
