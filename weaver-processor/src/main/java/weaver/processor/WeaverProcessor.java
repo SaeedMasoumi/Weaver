@@ -1,22 +1,25 @@
 package weaver.processor;
 
 import javassist.CtClass;
-import weaver.toolkit.WeaverToolkit;
+import weaver.common.Instrumentation;
+import weaver.common.Logger;
+import weaver.common.Processor;
+import weaver.common.WeaveEnvironment;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-public abstract class WeaverProcessor {
+public abstract class WeaverProcessor implements Processor {
 
     protected Logger logger;
-    protected WeaverToolkit weaverToolkit;
+    protected Instrumentation instrumentation;
 
-    public synchronized void init(ProcessingEnvironment env) {
+    public synchronized void init(WeaveEnvironment env) {
         logger = env.getLogger();
-        weaverToolkit = env.getWeaverToolkit();
+        instrumentation = env.getInstrumentation();
     }
 
-    public abstract void process(CtClass ctClass) throws Exception;
+    public abstract void transform(CtClass ctClass) throws Exception;
 
     public abstract boolean filter(CtClass ctClass);
 }

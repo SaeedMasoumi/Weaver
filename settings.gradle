@@ -3,7 +3,8 @@ include 'weaver-processor'
 include 'weaver-plugin'
 include 'tests/sample-processor'
 include 'tests/sample-annotation'
-
+include 'weaver-instrumentation'
+include 'weaver-common'
 
 rootProject.children.each { project ->
     if (project.name.startsWith("tests/")) {
@@ -11,5 +12,4 @@ rootProject.children.each { project ->
         project.name = project.name.substring(slash + 1)
     }
 }
-include 'weaver-toolkit'
 

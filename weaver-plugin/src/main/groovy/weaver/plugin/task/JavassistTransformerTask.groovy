@@ -3,7 +3,7 @@ package weaver.plugin.task
 import javassist.CtClass
 import weaver.plugin.internal.javassist.WeaverClassPool
 import weaver.plugin.internal.processor.ProcessingEnvironmentImp
-import weaver.processor.ProcessingEnvironment
+import weaver.common.WeaveEnvironment
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -15,7 +15,7 @@ public class JavassistTransformerTask extends TransformerTask {
     @Override
     void weaving() {
         createPool();
-        ProcessingEnvironment env = getProcessingEnvironment(pool)
+        WeaveEnvironment env = getProcessingEnvironment(pool)
         //init processors
         processors.each {
             it.init(env)
@@ -32,7 +32,7 @@ public class JavassistTransformerTask extends TransformerTask {
         }
     }
 
-    ProcessingEnvironment getProcessingEnvironment(WeaverClassPool pool) {
+    WeaveEnvironment getProcessingEnvironment(WeaverClassPool pool) {
         new ProcessingEnvironmentImp(project, pool);
     }
 

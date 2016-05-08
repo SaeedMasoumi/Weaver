@@ -1,11 +1,11 @@
 apply plugin: 'java'
 apply from: rootProject.file('gradle/deploy-snapshots.gradle')
+apply from: rootProject.file('gradle/jacoco.gradle')
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 dependencies {
-    compile project(':weaver-common')
+    compile deps.javassist
     testCompile deps.junit
 }
-

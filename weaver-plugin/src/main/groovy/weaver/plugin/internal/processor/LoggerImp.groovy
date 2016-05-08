@@ -1,6 +1,6 @@
 package weaver.plugin.internal.processor
 
-import weaver.processor.Logger
+import weaver.common.Logger
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
