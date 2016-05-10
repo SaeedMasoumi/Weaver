@@ -215,8 +215,8 @@ public class MethodInjectorImp extends BaseInjector<ClassInjectorImp>
         }
 
         @Override
-        public MethodInjectorNotExistsMode returns(Type type) {
-            return returns(type.getClass().getCanonicalName());
+        public MethodInjectorNotExistsMode returns(Class clazz) {
+            return returns(clazz.getCanonicalName());
         }
 
         @Override

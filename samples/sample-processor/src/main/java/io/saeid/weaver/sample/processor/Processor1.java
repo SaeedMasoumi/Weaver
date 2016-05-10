@@ -22,7 +22,7 @@ public class Processor1 extends WeaverProcessor {
 
         instrumentation.startWeaving(ctClass)
                 .insertInterface()
-                .implement(Runnable.class.getCanonicalName())
+                .implement(Runnable.class)
                 .inject()
                 .insertMethod("run")
                 .ifExistsButNotOverride()

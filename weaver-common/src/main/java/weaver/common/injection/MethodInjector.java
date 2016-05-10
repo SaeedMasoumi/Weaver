@@ -44,7 +44,7 @@ public interface MethodInjector<P extends ClassInjector> extends Injectable<P> {
 
     interface MethodInjectorNotExistsMode<P extends MethodInjector> extends Injectable<P> {
 
-        MethodInjectorNotExistsMode returns(Type clazz);
+        MethodInjectorNotExistsMode returns(Class clazz);
 
         MethodInjectorNotExistsMode returns(String fullQualifiedName);
 

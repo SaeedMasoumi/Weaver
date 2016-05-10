@@ -9,7 +9,7 @@ public interface InterfaceInjector<P extends ClassInjector> extends Injectable<P
 
     InterfaceInjector implement(String fullQualifiedName);
 
-    InterfaceInjector implement(Type type);
+    InterfaceInjector implement(Class clazz);
 
     @Override
     P inject() throws Exception;
