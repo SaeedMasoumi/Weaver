@@ -18,7 +18,7 @@ public class InterfaceWeavingTest extends WeavingSpec {
         instrumentation.startWeaving(ctClass)
                 .insertInterface()
                 .implement(SampleInterface.class.getCanonicalName())
-                .implement(SampleInterface2.class.getCanonicalName())
+                .implement(SampleInterface2.class)
                 .inject();
         Object clazz = ctClass.toClass().newInstance();
         assertThat(clazz, instanceOf(SampleInterface.class));

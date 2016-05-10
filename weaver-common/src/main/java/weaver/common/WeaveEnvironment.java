@@ -1,5 +1,7 @@
 package weaver.common;
 
+import javassist.ClassPool;
+
 /**
  * The {@link Processor} can use facilities provided by this interface during bytecode manipulation.
  *
@@ -11,5 +13,5 @@ public interface WeaveEnvironment {
      */
     Logger getLogger();
 
-    Instrumentation getInstrumentation();
+    ClassPool getClassPool();
 }

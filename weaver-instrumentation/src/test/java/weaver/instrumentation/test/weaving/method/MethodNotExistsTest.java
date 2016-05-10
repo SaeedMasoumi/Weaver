@@ -38,7 +38,7 @@ public class MethodNotExistsTest extends WeavingSpec {
                 .insertMethod("getConditionFromField")
                 .createIfNotExists()
                 .addModifiers(Modifier.PUBLIC)
-                .returns(Condition.class.getCanonicalName())
+                .returns(Condition.class)
                 .withBody("{" +
                         "System.out.println(\"Condition in field\"+conditionField);" +
                         "return conditionField;" +

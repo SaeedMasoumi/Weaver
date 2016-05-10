@@ -6,5 +6,5 @@ targetCompatibility = 1.7
 
 
 dependencies {
-    compile deps.weaverProcessor
+    compile project(':weaver-processor')
 }

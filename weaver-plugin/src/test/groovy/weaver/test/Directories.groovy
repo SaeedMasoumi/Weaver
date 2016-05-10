@@ -5,7 +5,11 @@ package weaver.test
  */
 
 class Directories {
-    public static final File BUILD_ROOT = new File(getClass().getResource("/").toURI()).parentFile.parentFile
-    public static final File OUTPUT_DIR = new File(BUILD_ROOT, "functionalTest")
-    public static final File CLASSES_DIR = new File(BUILD_ROOT, "resources/test/classes_dir")
+    static final File BUILD_ROOT = new File(getClass().getResource("/").toURI()).parentFile.parentFile
+    static final File OUTPUT_DIR = new File(BUILD_ROOT, "functionalTest")
+    static final File SAMPLE_PROJECT = new File(BUILD_ROOT, "resources/test/SampleProject")
+    static {
+        if (!OUTPUT_DIR.exists())
+            OUTPUT_DIR.mkdir()
+    }
 }

@@ -1,13 +1,13 @@
 rootProject.name = 'Weaver'
 include 'weaver-processor'
 include 'weaver-plugin'
-include 'tests/sample-processor'
-include 'tests/sample-annotation'
 include 'weaver-instrumentation'
 include 'weaver-common'
+include 'samples/sample-processor'
+include 'samples/sample-annotation'
 
 rootProject.children.each { project ->
-    if (project.name.startsWith("tests/")) {
+    if (project.name.startsWith("samples/")) {
         int slash = project.name.indexOf("/")
         project.name = project.name.substring(slash + 1)
     }

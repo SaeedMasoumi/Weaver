@@ -1,6 +1,7 @@
 package weaver.instrumentation.injection;
 
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import javassist.CtClass;
@@ -29,8 +30,8 @@ public class InterfaceInjectorImp extends BaseInjector<ClassInjectorImp> impleme
     }
 
     @Override
-    public InterfaceInjector implement(Class<?> interfaceClass) {
-        return implement(interfaceClass.getCanonicalName());
+    public InterfaceInjector implement(Type type) {
+        return implement(type.getClass().getCanonicalName());
     }
 
     @Override

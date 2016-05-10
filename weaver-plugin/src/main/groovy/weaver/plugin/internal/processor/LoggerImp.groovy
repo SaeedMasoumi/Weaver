@@ -1,10 +1,12 @@
 package weaver.plugin.internal.processor
 
+import groovy.transform.CompileStatic
 import weaver.common.Logger
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
+@CompileStatic
 class LoggerImp implements Logger {
 
     private org.gradle.api.logging.Logger logger

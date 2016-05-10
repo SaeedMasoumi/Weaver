@@ -1,5 +1,7 @@
 package weaver.common.injection;
 
+import java.lang.reflect.Type;
+
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
@@ -41,6 +43,8 @@ public interface MethodInjector<P extends ClassInjector> extends Injectable<P> {
     }
 
     interface MethodInjectorNotExistsMode<P extends MethodInjector> extends Injectable<P> {
+
+        MethodInjectorNotExistsMode returns(Type clazz);
 
         MethodInjectorNotExistsMode returns(String fullQualifiedName);
 

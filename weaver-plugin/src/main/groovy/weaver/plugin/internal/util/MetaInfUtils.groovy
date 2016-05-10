@@ -1,6 +1,5 @@
 package weaver.plugin.internal.util
 
-import com.android.build.api.transform.TransformException
 import org.gradle.api.Project
 
 /**
@@ -10,12 +9,14 @@ class MetaInfUtils {
 
     static final PROCESSORS_PROP = "META-INF/weaver/processors"
 
+    /**
+     * Retrieves processors name existing in META-INF
+     */
     static List<String> extractProcessorsName(Project project, Set<File> dependencies) {
-        if (!dependencies) {
-            throw new TransformException("TransformerTask ignored [No weaver processor specified]");
-        }
         //extract weaverProcessor
-        def names = []
+        List<String> names = new ArrayList<>()
+        if (!dependencies)
+            return names
         for (File it : dependencies) {
             def prop = project.zipTree(it).matching {
                 include PROCESSORS_PROP

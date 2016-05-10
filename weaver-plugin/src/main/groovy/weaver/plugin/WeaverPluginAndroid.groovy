@@ -6,17 +6,14 @@ import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.compile.JavaCompile
-import weaver.plugin.task.TransformerTask
+
+import static weaver.plugin.task.TaskManager.createAndroidTransformerTask
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 
 class WeaverPluginAndroid implements Plugin<Project> {
-
-    static final TRANSFORMER_TASK = "weaverAndroid"
 
     @Override
     void apply(Project project) {
@@ -25,34 +22,16 @@ class WeaverPluginAndroid implements Plugin<Project> {
             if (isLibrary) {
                 def android = project.extensions.getByType(LibraryExtension)
                 android.libraryVariants.all { BaseVariant variant ->
-                    configure project, variant, isLibrary
+                    createAndroidTransformerTask project, variant
                 }
             } else {
                 def android = project.extensions.getByType(AppExtension)
                 android.applicationVariants.all { BaseVariant variant ->
-                    configure project, variant, isLibrary
+                    def transformerTask = createAndroidTransformerTask project, variant
+                    variant.install?.dependsOn(transformerTask)
                 }
             }
         }
-    }
-
-    static void configure(Project project, BaseVariant variant, boolean isLibrary) {
-        def taskName = "$TRANSFORMER_TASK${variant.name.capitalize()}"
-        JavaCompile javaCompileTask = variant.javaCompiler as JavaCompile
-        //TODO it kills jack & jill
-        FileCollection classpathFileCollection = project.files(javaCompileTask.options.bootClasspath)
-        classpathFileCollection += javaCompileTask.classpath
-        //TODO pass exclude type for .class files (e.g. R.class)
-        def transformerTask =
-                new TransformerTask.Builder()
-                        .setClassesDir(javaCompileTask.destinationDir)
-                        .setClasspath(classpathFileCollection)
-                        .setOutputDir(project.file("$project.buildDir/weaver/$variant.name"))
-                        .setTaskName(taskName)
-                        .build(project)
-        transformerTask.mustRunAfter javaCompileTask
-        variant.assemble.dependsOn transformerTask
-        if (!isLibrary) variant.install?.dependsOn(transformerTask)
     }
 
 }

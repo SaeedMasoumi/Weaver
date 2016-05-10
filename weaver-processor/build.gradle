@@ -5,7 +5,7 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 dependencies {
-    compile project(':weaver-common')
+    compile project(':weaver-instrumentation')
     testCompile deps.junit
 }
 

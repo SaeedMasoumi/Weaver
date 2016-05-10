@@ -1,5 +1,6 @@
 package weaver.instrumentation.injection;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import javassist.CtMethod;
@@ -213,6 +214,10 @@ public class MethodInjectorImp extends BaseInjector<ClassInjectorImp>
             super(methodInjectorImp);
         }
 
+        @Override
+        public MethodInjectorNotExistsMode returns(Type type) {
+            return returns(type.getClass().getCanonicalName());
+        }
 
         @Override
         public MethodInjectorNotExistsMode returns(String fullQualifiedName) {

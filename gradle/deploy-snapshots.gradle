@@ -35,10 +35,16 @@ task deploySnapshots {
         def nexusUserName = System.getenv("NEXUS_USERNAME")
         def nexusPassword = System.getenv("NEXUS_PASSWORD")
         if (!nexusUserName && !nexusPassword) {
-            throw new RuntimeException("Username or/and password variables are not set")
+            throw new RuntimeException("Username or/and password variables are not setted")
         }
+
         setProperty("nexusUsername", nexusUserName)
         setProperty("nexusPassword", nexusPassword)
+    } else {
+        Properties prop = new Properties()
+        prop.load(project.rootProject.file('local.properties').newDataInputStream())
+        setProperty("nexusUsername", prop.getProperty("nexusUsername"))
+        setProperty("nexusPassword", prop.getProperty("nexusPassword"))
     }
     //otherwise ignore that because we are not on travis
 }

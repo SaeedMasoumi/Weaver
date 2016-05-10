@@ -1,5 +1,6 @@
 package weaver.plugin.internal.javassist
 
+import groovy.transform.CompileStatic
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.Loader
@@ -8,6 +9,7 @@ import org.gradle.api.file.FileCollection
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
+@CompileStatic
 class WeaverClassPool extends ClassPool {
 
     private ClassLoader parentClassLoader
