@@ -35,7 +35,7 @@ class TransformerTask extends DefaultTask {
     ClassLoader classLoader
 
     @TaskAction
-    void startTransformin() {
+    void startTransforming() {
         int time = System.currentTimeMillis()
         if (!outputDir.exists())
             outputDir.mkdir()
@@ -89,7 +89,7 @@ class TransformerTask extends DefaultTask {
     ClassLoader initClassLoader() {
         def urls = []
         if (classpath)
-            urls += classpath.each { it.toURI().toURL() }
+            urls += classpath.collect { it.toURI().toURL() }
         if (classesDir)
             urls += normalizeDirectoryForClassLoader(classesDir)
         URLClassLoader classLoader = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)

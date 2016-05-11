@@ -1,7 +1,5 @@
 package weaver.common.injection;
 
-import java.lang.reflect.Type;
-
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */

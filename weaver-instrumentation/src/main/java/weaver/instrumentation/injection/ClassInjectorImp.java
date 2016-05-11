@@ -28,7 +28,7 @@ public class ClassInjectorImp implements ClassInjector, ResourceBundle {
     }
 
     @Override
-    public FieldInjector insertField(Class<?> type, String name) {
+    public FieldInjector insertField(Class type, String name) {
         return insertField(type.getCanonicalName(), name);
     }
 
@@ -43,7 +43,7 @@ public class ClassInjectorImp implements ClassInjector, ResourceBundle {
     }
 
     @Override
-    public MethodInjector insertMethod(String methodName, Class<?>... parameters) {
+    public MethodInjector insertMethod(String methodName, Class... parameters) {
         String[] parametersName = new String[parameters.length];
         for (int i = 0; i < parametersName.length; i++) {
             parametersName[i] = parameters[i].getCanonicalName();
