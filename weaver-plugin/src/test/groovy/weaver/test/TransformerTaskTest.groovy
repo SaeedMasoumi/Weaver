@@ -83,5 +83,7 @@ class TransformerTaskTest {
         assertThat(sampleClass, instanceOf(Runnable.class))
         Runnable runnable = sampleClass as Runnable
         runnable.run()
+        executeTask("clean")
+        executeTask("build")
     }
 }

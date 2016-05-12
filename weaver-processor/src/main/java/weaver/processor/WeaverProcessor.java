@@ -1,11 +1,10 @@
 package weaver.processor;
 
 import javassist.CtClass;
-import weaver.common.Instrumentation;
 import weaver.common.Logger;
 import weaver.common.Processor;
 import weaver.common.WeaveEnvironment;
-import weaver.instrumentation.InstrumentationImp;
+import weaver.instrumentation.Instrumentation;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -19,7 +18,7 @@ public abstract class WeaverProcessor implements Processor {
     public synchronized void init(WeaveEnvironment env) {
         weaveEnvironment = env;
         logger = env.getLogger();
-        instrumentation = new InstrumentationImp(env.getClassPool());
+        instrumentation = new Instrumentation(env.getClassPool());
     }
 
     public abstract boolean filter(CtClass ctClass);

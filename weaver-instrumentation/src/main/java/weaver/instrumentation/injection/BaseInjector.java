@@ -14,6 +14,8 @@ abstract class BaseInjector<Parent extends ResourceBundle>
         this.parent = parent;
     }
 
+    public abstract Parent inject() throws Exception;
+
     @Override
     public CtClass getCtClass() {
         return parent.getCtClass();

@@ -13,9 +13,9 @@ import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_SUPER;
 class MethodExprEditor extends ExprEditor {
     private static final String DEFAULT_EXPR = "$_ = $proceed($$);";
 
-    private MethodInjectorImp.Statement statement;
+    private MethodInjector.Statement statement;
 
-    MethodExprEditor(MethodInjectorImp.Statement statement) {
+    MethodExprEditor(MethodInjector.Statement statement) {
         this.statement = statement;
     }
 

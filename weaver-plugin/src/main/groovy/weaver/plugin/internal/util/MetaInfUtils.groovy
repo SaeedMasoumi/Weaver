@@ -18,6 +18,7 @@ class MetaInfUtils {
         if (!dependencies)
             return names
         for (File it : dependencies) {
+            if (!it.exists()) continue
             def prop = project.zipTree(it).matching {
                 include PROCESSORS_PROP
             }

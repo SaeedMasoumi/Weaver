@@ -20,7 +20,7 @@ public class FieldWeavingTest extends WeavingSpec {
     public void test_filed_injection()
             throws Exception {
         instrumentation.startWeaving(ctClass)
-                .insertField(Point.class.getCanonicalName(), "point")
+                .insertField(Point.class.getCanonicalName(), "$$point")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .initializeIt()
                 .inject()
@@ -36,7 +36,7 @@ public class FieldWeavingTest extends WeavingSpec {
 
 
         Object instance = ctClass.toClass().newInstance();
-        Field point = instance.getClass().getField("point");
+        Field point = instance.getClass().getField("$$point");
         Field integer = instance.getClass().getField("integer");
         Field nullPoint = instance.getClass().getField("nullPoint");
 

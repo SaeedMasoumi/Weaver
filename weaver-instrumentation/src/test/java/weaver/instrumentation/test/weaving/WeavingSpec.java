@@ -11,20 +11,20 @@ import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
-import weaver.instrumentation.InstrumentationImp;
+import weaver.instrumentation.Instrumentation;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 public abstract class WeavingSpec {
 
-    protected InstrumentationImp instrumentation;
+    protected Instrumentation instrumentation;
     protected CtClass ctClass;
 
     @Before
     public void initClassPool() throws NotFoundException {
         ClassPool pool = ClassPool.getDefault();
-        instrumentation = new InstrumentationImp(pool);
+        instrumentation = new Instrumentation(pool);
         ctClass = pool.get(getSampleClassName());
         ctClass.setName(ctClass.getName() + getTransformedName());
     }

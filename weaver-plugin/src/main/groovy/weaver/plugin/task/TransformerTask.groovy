@@ -50,6 +50,7 @@ class TransformerTask extends DefaultTask {
         try {
             weaving(processors)
         } catch (all) {
+            logger.quiet("Weaving exception :[ $all.message ]")
             successfulTransforming = false
         }
         setDidWork(successfulTransforming)

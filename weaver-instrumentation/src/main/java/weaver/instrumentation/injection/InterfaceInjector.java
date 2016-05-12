@@ -4,23 +4,19 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import javassist.CtClass;
-import weaver.common.injection.ClassInjector;
-import weaver.common.injection.InterfaceInjector;
 
 import static weaver.instrumentation.internal.JavassistUtils.hasInterface;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-public class InterfaceInjectorImp extends BaseInjector<ClassInjectorImp> implements
-        InterfaceInjector<ClassInjector> {
+public class InterfaceInjector extends BaseInjector<ClassInjector> {
     private ArrayList<String> qualifiedNames = new ArrayList<>();
 
-    InterfaceInjectorImp(ClassInjectorImp classInjectorImp) {
-        super(classInjectorImp);
+    InterfaceInjector(ClassInjector classInjector) {
+        super(classInjector);
     }
 
-    @Override
     public InterfaceInjector implement(String fullQualifiedName) {
         if (!qualifiedNames.contains(fullQualifiedName)) {
             qualifiedNames.add(fullQualifiedName);
@@ -28,7 +24,6 @@ public class InterfaceInjectorImp extends BaseInjector<ClassInjectorImp> impleme
         return this;
     }
 
-    @Override
     public InterfaceInjector implement(Class clazz) {
         return implement(clazz.getCanonicalName());
     }

@@ -15,17 +15,8 @@ class WeaverClassPool extends ClassPool {
     private ClassLoader parentClassLoader
     private Loader javassistLoader
 
-    WeaverClassPool(ClassLoader parentClassLoader) {
-        this.parentClassLoader = parentClassLoader
-    }
-
     WeaverClassPool(ClassLoader parentClassLoader, boolean useDefaultPath) {
         super(useDefaultPath)
-        this.parentClassLoader = parentClassLoader
-    }
-
-    WeaverClassPool(ClassLoader parentClassLoader, ClassPool parent) {
-        super(parent)
         this.parentClassLoader = parentClassLoader
     }
 

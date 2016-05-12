@@ -1,13 +1,10 @@
 package weaver.instrumentation.injection;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.Modifier;
-import weaver.common.injection.ClassInjector;
-import weaver.common.injection.MethodInjector;
 
 import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_A_CALL;
 import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_SUPER;
@@ -23,37 +20,33 @@ import static weaver.instrumentation.internal.JavassistUtils.getModifiers;
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-public class MethodInjectorImp extends BaseInjector<ClassInjectorImp>
-        implements MethodInjector<ClassInjector> {
+public class MethodInjector extends BaseInjector<ClassInjector> {
 
     private String methodName;
     private String[] parameters = null;
 
-    private MethodInjectorExistsModeImp existsMode = null;
-    private MethodInjectorOverrideModeImp overrideMode = null;
-    private MethodInjectorNotExistsModeImp notExistsMode = null;
+    private MethodInjectorExistsMode existsMode = null;
+    private MethodInjectorOverrideMode overrideMode = null;
+    private MethodInjectorNotExistsMode notExistsMode = null;
 
-    MethodInjectorImp(ClassInjectorImp classInjectorImp, String methodName, String[] parameters) {
-        super(classInjectorImp);
+    MethodInjector(ClassInjector classInjector, String methodName, String[] parameters) {
+        super(classInjector);
         this.methodName = methodName;
         this.parameters = parameters;
     }
 
-    @Override
     public MethodInjectorExistsMode ifExists() {
-        existsMode = new MethodInjectorExistsModeImp(this);
+        existsMode = new MethodInjectorExistsMode(this);
         return existsMode;
     }
 
-    @Override
     public MethodInjectorOverrideMode ifExistsButNotOverride() {
-        overrideMode = new MethodInjectorOverrideModeImp(this);
+        overrideMode = new MethodInjectorOverrideMode(this);
         return overrideMode;
     }
 
-    @Override
     public MethodInjectorNotExistsMode createIfNotExists() {
-        notExistsMode = new MethodInjectorNotExistsModeImp(this);
+        notExistsMode = new MethodInjectorNotExistsMode(this);
         return notExistsMode;
     }
 
@@ -105,45 +98,38 @@ public class MethodInjectorImp extends BaseInjector<ClassInjectorImp>
         return parameters;
     }
 
-    private static class MethodInjectorExistsModeImp extends BaseInjector<MethodInjectorImp>
-            implements MethodInjectorExistsMode<MethodInjector> {
+    public static class MethodInjectorExistsMode extends BaseInjector<MethodInjector> {
         private ArrayList<Statement> statements = new ArrayList<>();
 
-        MethodInjectorExistsModeImp(MethodInjectorImp methodInjectorImp) {
-            super(methodInjectorImp);
+        MethodInjectorExistsMode(MethodInjector methodInjector) {
+            super(methodInjector);
         }
 
-        @Override
         public MethodInjectorExistsMode atTheBeginning(String statements) {
             this.statements.add(new Statement(AT_THE_BEGINNING, statements));
             return this;
         }
 
-        @Override
         public MethodInjectorExistsMode atTheEnd(String statements) {
             this.statements.add(new Statement(AT_THE_END, statements));
             return this;
         }
 
-        @Override
         public MethodInjectorExistsMode afterSuper(String statements) {
             this.statements.add(new Statement(AFTER_SUPER, statements));
             return this;
         }
 
-        @Override
         public MethodInjectorExistsMode beforeSuper(String statements) {
             this.statements.add(new Statement(BEFORE_SUPER, statements));
             return this;
         }
 
-        @Override
         public MethodInjectorExistsMode afterACallTo(String call, String statements) {
             this.statements.add(new Statement(AFTER_A_CALL, statements, call));
             return this;
         }
 
-        @Override
         public MethodInjectorExistsMode beforeACallTo(String call, String statements) {
             this.statements.add(new Statement(BEFORE_A_CALL, statements, call));
             return this;
@@ -159,16 +145,14 @@ public class MethodInjectorImp extends BaseInjector<ClassInjectorImp>
         }
     }
 
-    private static class MethodInjectorOverrideModeImp extends BaseInjector<MethodInjectorImp>
-            implements MethodInjectorOverrideMode<MethodInjector> {
+    public static class MethodInjectorOverrideMode extends BaseInjector<MethodInjector> {
 
         private String fullMethod;
 
-        MethodInjectorOverrideModeImp(MethodInjectorImp methodInjectorImp) {
-            super(methodInjectorImp);
+        MethodInjectorOverrideMode(MethodInjector methodInjector) {
+            super(methodInjector);
         }
 
-        @Override
         public MethodInjectorOverrideMode override(String fullMethodBody) {
             this.fullMethod = fullMethodBody;
             return this;
@@ -201,8 +185,7 @@ public class MethodInjectorImp extends BaseInjector<ClassInjectorImp>
         }
     }
 
-    private static class MethodInjectorNotExistsModeImp extends BaseInjector<MethodInjectorImp>
-            implements MethodInjectorNotExistsMode<MethodInjector> {
+    public static class MethodInjectorNotExistsMode extends BaseInjector<MethodInjector> {
 
         private int modifiers = 0;
         private String returnType = "void";
@@ -210,34 +193,29 @@ public class MethodInjectorImp extends BaseInjector<ClassInjectorImp>
         private String[] parametersName = new String[0];
         private String fullMethod = "";
 
-        MethodInjectorNotExistsModeImp(MethodInjectorImp methodInjectorImp) {
-            super(methodInjectorImp);
+        MethodInjectorNotExistsMode(MethodInjector methodInjector) {
+            super(methodInjector);
         }
 
-        @Override
         public MethodInjectorNotExistsMode returns(Class clazz) {
             return returns(clazz.getCanonicalName());
         }
 
-        @Override
         public MethodInjectorNotExistsMode returns(String fullQualifiedName) {
             this.returnType = fullQualifiedName;
             return this;
         }
 
-        @Override
         public MethodInjectorNotExistsMode addModifiers(int... modifiers) {
             this.modifiers = getModifiers(this.modifiers, modifiers);
             return this;
         }
 
-        @Override
         public MethodInjectorNotExistsMode setParametersName(String... parametersName) {
             this.parametersName = parametersName;
             return this;
         }
 
-        @Override
         public MethodInjectorNotExistsMode withBody(String body) {
             this.body = body;
             return this;
