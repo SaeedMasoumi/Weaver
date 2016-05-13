@@ -9,7 +9,7 @@ public interface Processor {
 
     void init(WeaveEnvironment processingEnvironment);
 
-    boolean filter(CtClass ctClass);
+    boolean filter(CtClass candidateClass);
 
-    void transform(CtClass ctClass) throws Exception;
+    void transform(CtClass candidateClass) throws Exception;
 }

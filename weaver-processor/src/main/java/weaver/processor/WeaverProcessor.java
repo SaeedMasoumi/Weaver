@@ -21,7 +21,7 @@ public abstract class WeaverProcessor implements Processor {
         instrumentation = new Instrumentation(env.getClassPool());
     }
 
-    public abstract boolean filter(CtClass ctClass);
+    public abstract boolean filter(CtClass candidateClass);
 
-    public abstract void transform(CtClass ctClass) throws Exception;
+    public abstract void transform(CtClass candidateClass) throws Exception;
 }

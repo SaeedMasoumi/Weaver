@@ -1,6 +1,7 @@
 # Weaver
 [![Build Status](https://travis-ci.org/SaeedMasoumi/Weaver.svg?branch=master)](https://travis-ci.org/SaeedMasoumi/Weaver) [![codecov](https://codecov.io/gh/SaeedMasoumi/Weaver/branch/master/graph/badge.svg)](https://codecov.io/gh/SaeedMasoumi/Weaver)
-
+[![Java Compatible](https://img.shields.io/badge/compatibility-java-blue.svg)](https://github.com/SaeedMasoumi/Weaver)
+[![Android Compatible](https://img.shields.io/badge/compatibility-android-brightgreen.svg)](https://github.com/SaeedMasoumi/Weaver)
 
 Gradle plugin with a fluent API for java bytecode manipulation.
 

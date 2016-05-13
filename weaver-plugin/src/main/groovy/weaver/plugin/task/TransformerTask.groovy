@@ -100,6 +100,7 @@ class TransformerTask extends DefaultTask {
 
     def createPool() {
         WeaverClassPool pool = new WeaverClassPool(classLoader, true)
+        pool.childFirstLookup = true
         pool.appendClassPath(classpath)
         pool.appendClassPath(classesDir)
         return pool
