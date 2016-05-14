@@ -1,5 +1,14 @@
-plugins {
-    id "com.bmuschko.nexus" version "2.3.1"
+buildscript {
+    repositories {
+        jcenter()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0'
+        classpath 'net.nemerosa:versioning:1.7.1'
+    }
 }
 
 group GROUP

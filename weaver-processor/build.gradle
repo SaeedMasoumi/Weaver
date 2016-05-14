@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply from: rootProject.file('gradle/deploy-snapshots.gradle')
+apply from: rootProject.file('gradle/jfrog-uploader.gradle')
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7

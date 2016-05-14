@@ -11,22 +11,23 @@ public class Activity extends ParentActivity {
 
     @Override
     public void onCreate(Bundle bundle) {
+        bar();
         super.onCreate(bundle);
+        foo();
+        finish();
     }
 
+    private void finish() {
+        array = null;
+    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        foo();
-        bar();
+    private void bar() {
+
     }
 
     private void foo() {
 
     }
 
-    private void bar() {
 
-    }
 }

@@ -19,18 +19,20 @@ public class MethodExistsTest extends WeavingSpec {
         instrumentation.startWeaving(ctClass)
                 .insertMethod("onCreate", Bundle.class.getCanonicalName())
                 .ifExists()
-                .atTheEnd("array.add(new Integer(4));")
-                .afterSuper("array.add(new Integer(3));")
                 .atTheBeginning("array.add(new Integer(1));")
-                .beforeSuper("array.add(new Integer(2));")
-                .atTheBeginning("System.out.println(\"start\");")
+                .beforeSuper("array.add(new Integer(3));")
+                .afterACallTo("bar", "array.add(new Integer(2));")
+                .afterSuper("array.add(new Integer(4));")
+                .beforeACallTo("foo", "array.add(new Integer(5));")
+                .atTheEnd("array.add(new Integer(6));")
+                .aroundACallTo("finish",
+                        "String name = \"test\";" +
+                                "if(!name.equals(\"test\")){",
+                        "}")
                 .inject()
                 .inject()
-                .insertMethod("onDestroy")
-                .ifExists()
-                .beforeACallTo("foo", "System.out.println(\"before foo\");\n")
-                .afterACallTo("bar", "System.out.println(\"after bar\");\n")
-                .inject().inject();
+        ;
+
         Object instance = ctClass.toClass().newInstance();
         Field field = instance.getClass().getField("array");
         ArrayList<Integer> arrays = (ArrayList<Integer>) field.get(instance);

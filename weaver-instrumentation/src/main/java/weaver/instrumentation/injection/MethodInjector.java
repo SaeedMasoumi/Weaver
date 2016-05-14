@@ -12,6 +12,7 @@ import static weaver.instrumentation.injection.InternalUtils.getDeclaredMethods;
 import static weaver.instrumentation.injection.InternalUtils.getModifiers;
 import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_A_CALL;
 import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_SUPER;
+import static weaver.instrumentation.injection.MethodInjectionMode.AROUND_A_CALL;
 import static weaver.instrumentation.injection.MethodInjectionMode.AT_THE_BEGINNING;
 import static weaver.instrumentation.injection.MethodInjectionMode.AT_THE_END;
 import static weaver.instrumentation.injection.MethodInjectionMode.BEFORE_A_CALL;
@@ -69,20 +70,21 @@ public class MethodInjector extends BaseInjector<ClassInjector> {
                     getCtClass());
             method.setModifiers(methodInParent.getModifiers() & ~Modifier.ABSTRACT);
         } else if (methodInClass != null && existsMode != null) {
-            for (Statement statement : existsMode.getStatements()) {
-                switch (statement.injectionMode) {
+            for (CodeBlock codeBlock : existsMode.getCodeBlocks()) {
+                switch (codeBlock.where) {
                     case AT_THE_BEGINNING:
-                        methodInClass.insertBefore(statement.body);
+                        methodInClass.insertBefore(codeBlock.body);
                         break;
                     case BEFORE_SUPER:
                     case AFTER_SUPER:
                     case AFTER_A_CALL:
                     case BEFORE_A_CALL:
-                        MethodExprEditor editor = new MethodExprEditor(statement);
+                    case AROUND_A_CALL:
+                        MethodExprEditor editor = new MethodExprEditor(codeBlock);
                         methodInClass.instrument(editor);
                         break;
                     case AT_THE_END:
-                        methodInClass.insertAfter(statement.body);
+                        methodInClass.insertAfter(codeBlock.body);
                         break;
                 }
             }
@@ -101,39 +103,47 @@ public class MethodInjector extends BaseInjector<ClassInjector> {
     }
 
     public static class MethodInjectorExistsMode extends BaseInjector<MethodInjector> {
-        private ArrayList<Statement> statements = new ArrayList<>();
+        private ArrayList<CodeBlock> codeBlocks = new ArrayList<>();
 
         MethodInjectorExistsMode(MethodInjector methodInjector) {
             super(methodInjector);
         }
 
         public MethodInjectorExistsMode atTheBeginning(String statements) {
-            this.statements.add(new Statement(AT_THE_BEGINNING, statements));
+            this.codeBlocks.add(CodeBlock.atBeginningOrEnd(AT_THE_BEGINNING, statements));
             return this;
         }
 
         public MethodInjectorExistsMode atTheEnd(String statements) {
-            this.statements.add(new Statement(AT_THE_END, statements));
+            this.codeBlocks.add(CodeBlock.atBeginningOrEnd(AT_THE_END, statements));
             return this;
         }
 
         public MethodInjectorExistsMode afterSuper(String statements) {
-            this.statements.add(new Statement(AFTER_SUPER, statements));
+            this.codeBlocks.add(CodeBlock.afterOrBeforeStatements(AFTER_SUPER, statements, null));
             return this;
         }
 
         public MethodInjectorExistsMode beforeSuper(String statements) {
-            this.statements.add(new Statement(BEFORE_SUPER, statements));
+            this.codeBlocks.add(CodeBlock.afterOrBeforeStatements(BEFORE_SUPER, statements, null));
             return this;
         }
 
         public MethodInjectorExistsMode afterACallTo(String call, String statements) {
-            this.statements.add(new Statement(AFTER_A_CALL, statements, call));
+            this.codeBlocks.add(CodeBlock.afterOrBeforeStatements(AFTER_A_CALL, statements, call));
             return this;
         }
 
         public MethodInjectorExistsMode beforeACallTo(String call, String statements) {
-            this.statements.add(new Statement(BEFORE_A_CALL, statements, call));
+            this.codeBlocks.add(CodeBlock.afterOrBeforeStatements(BEFORE_A_CALL, statements, call));
+            return this;
+        }
+
+        public MethodInjectorExistsMode aroundACallTo(String call, String beforeCallCode,
+                                                      String afterCallCode) {
+            this.codeBlocks.add(
+                    CodeBlock.aroundMethod(AROUND_A_CALL, beforeCallCode, afterCallCode,
+                            call));
             return this;
         }
 
@@ -142,8 +152,8 @@ public class MethodInjector extends BaseInjector<ClassInjector> {
             return parent;
         }
 
-        ArrayList<Statement> getStatements() {
-            return statements;
+        ArrayList<CodeBlock> getCodeBlocks() {
+            return codeBlocks;
         }
     }
 
@@ -167,23 +177,6 @@ public class MethodInjector extends BaseInjector<ClassInjector> {
 
         String getFullMethod() {
             return fullMethod;
-        }
-    }
-
-    static class Statement {
-        MethodInjectionMode injectionMode;
-        String body;
-        String methodCall;
-
-        Statement(MethodInjectionMode injectionMode, String body) {
-            this.injectionMode = injectionMode;
-            this.body = body;
-        }
-
-        Statement(MethodInjectionMode injectionMode, String body, String methodCall) {
-            this.injectionMode = injectionMode;
-            this.body = body;
-            this.methodCall = methodCall;
         }
     }
 

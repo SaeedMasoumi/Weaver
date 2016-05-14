@@ -9,5 +9,6 @@ enum MethodInjectionMode {
     AFTER_SUPER,
     BEFORE_SUPER,
     AFTER_A_CALL,
-    BEFORE_A_CALL
+    BEFORE_A_CALL,
+    AROUND_A_CALL
 }
