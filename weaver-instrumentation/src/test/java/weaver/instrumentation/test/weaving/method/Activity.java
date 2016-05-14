@@ -13,4 +13,20 @@ public class Activity extends ParentActivity {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
     }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        foo();
+        bar();
+    }
+
+    private void foo() {
+
+    }
+
+    private void bar() {
+
+    }
 }

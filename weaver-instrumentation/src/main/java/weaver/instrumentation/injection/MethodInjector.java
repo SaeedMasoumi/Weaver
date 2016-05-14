@@ -6,16 +6,16 @@ import javassist.CtMethod;
 import javassist.CtNewMethod;
 import javassist.Modifier;
 
+import static weaver.instrumentation.injection.InternalUtils.findMethod;
+import static weaver.instrumentation.injection.InternalUtils.getAllMethods;
+import static weaver.instrumentation.injection.InternalUtils.getDeclaredMethods;
+import static weaver.instrumentation.injection.InternalUtils.getModifiers;
 import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_A_CALL;
 import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_SUPER;
 import static weaver.instrumentation.injection.MethodInjectionMode.AT_THE_BEGINNING;
 import static weaver.instrumentation.injection.MethodInjectionMode.AT_THE_END;
 import static weaver.instrumentation.injection.MethodInjectionMode.BEFORE_A_CALL;
 import static weaver.instrumentation.injection.MethodInjectionMode.BEFORE_SUPER;
-import static weaver.instrumentation.internal.JavassistUtils.findMethod;
-import static weaver.instrumentation.internal.JavassistUtils.getAllMethods;
-import static weaver.instrumentation.internal.JavassistUtils.getDeclaredMethods;
-import static weaver.instrumentation.internal.JavassistUtils.getModifiers;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -76,6 +76,8 @@ public class MethodInjector extends BaseInjector<ClassInjector> {
                         break;
                     case BEFORE_SUPER:
                     case AFTER_SUPER:
+                    case AFTER_A_CALL:
+                    case BEFORE_A_CALL:
                         MethodExprEditor editor = new MethodExprEditor(statement);
                         methodInClass.instrument(editor);
                         break;
@@ -171,17 +173,17 @@ public class MethodInjector extends BaseInjector<ClassInjector> {
     static class Statement {
         MethodInjectionMode injectionMode;
         String body;
-        String around;
+        String methodCall;
 
         Statement(MethodInjectionMode injectionMode, String body) {
             this.injectionMode = injectionMode;
             this.body = body;
         }
 
-        Statement(MethodInjectionMode injectionMode, String body, String around) {
+        Statement(MethodInjectionMode injectionMode, String body, String methodCall) {
             this.injectionMode = injectionMode;
             this.body = body;
-            this.around = around;
+            this.methodCall = methodCall;
         }
     }
 

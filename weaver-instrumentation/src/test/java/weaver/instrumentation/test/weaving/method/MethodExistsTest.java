@@ -25,12 +25,18 @@ public class MethodExistsTest extends WeavingSpec {
                 .beforeSuper("array.add(new Integer(2));")
                 .atTheBeginning("System.out.println(\"start\");")
                 .inject()
-                .inject();
+                .inject()
+                .insertMethod("onDestroy")
+                .ifExists()
+                .beforeACallTo("foo", "System.out.println(\"before foo\");\n")
+                .afterACallTo("bar", "System.out.println(\"after bar\");\n")
+                .inject().inject();
         Object instance = ctClass.toClass().newInstance();
         Field field = instance.getClass().getField("array");
         ArrayList<Integer> arrays = (ArrayList<Integer>) field.get(instance);
         //assert orders by calling
-        invokeMethod(void.class, "onCreate", instance, new Class[] {Bundle.class}, new Object[]{new Bundle()});
+        invokeMethod(void.class, "onCreate", instance, new Class[] {Bundle.class},
+                new Object[] {new Bundle()});
         for (int i = 1; i <= arrays.size(); i++) {
             assertEquals(new Integer(i), arrays.get(i - 1));
         }

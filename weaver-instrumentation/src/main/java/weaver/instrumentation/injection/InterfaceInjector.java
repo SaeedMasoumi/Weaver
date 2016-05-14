@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import javassist.CtClass;
 
-import static weaver.instrumentation.internal.JavassistUtils.hasInterface;
+import static weaver.instrumentation.injection.InternalUtils.hasInterface;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)

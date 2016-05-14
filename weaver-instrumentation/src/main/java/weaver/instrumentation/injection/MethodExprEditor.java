@@ -4,6 +4,7 @@ import javassist.CannotCompileException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 
+import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_A_CALL;
 import static weaver.instrumentation.injection.MethodInjectionMode.AFTER_SUPER;
 
 
@@ -28,6 +29,10 @@ class MethodExprEditor extends ExprEditor {
                 if (!m.isSuper()) return;
                 injectBodyBeforeOrAfterSuper(rb);
                 break;
+            case AFTER_A_CALL:
+            case BEFORE_A_CALL:
+                if (!m.getMethodName().equals(statement.methodCall)) return;
+                injectBeforeOrAfterACall(rb);
         }
         m.replace(rb.toString());
         super.edit(m);
@@ -35,6 +40,14 @@ class MethodExprEditor extends ExprEditor {
 
     private void injectBodyBeforeOrAfterSuper(StringBuilder rb) {
         if (statement.injectionMode.equals(AFTER_SUPER)) {
+            rb.append(DEFAULT_EXPR).append("\n").append(statement.body);
+        } else {
+            rb.append(statement.body).append("\n").append(DEFAULT_EXPR);
+        }
+    }
+
+    private void injectBeforeOrAfterACall(StringBuilder rb) {
+        if (statement.injectionMode.equals(AFTER_A_CALL)) {
             rb.append(DEFAULT_EXPR).append("\n").append(statement.body);
         } else {
             rb.append(statement.body).append("\n").append(DEFAULT_EXPR);

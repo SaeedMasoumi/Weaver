@@ -4,8 +4,8 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtNewMethod;
 
-import static weaver.instrumentation.internal.JavassistUtils.getModifiers;
-import static weaver.instrumentation.internal.StringUtils.capitalize;
+import static weaver.instrumentation.injection.InternalUtils.getModifiers;
+import static weaver.instrumentation.injection.InternalUtils.capitalize;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)

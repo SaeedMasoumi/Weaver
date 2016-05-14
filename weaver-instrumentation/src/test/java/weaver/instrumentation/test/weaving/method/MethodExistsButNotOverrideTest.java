@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import javassist.CtMethod;
 import javassist.Modifier;
-import weaver.instrumentation.internal.JavassistUtils;
+import weaver.instrumentation.injection.InternalUtils;
 import weaver.instrumentation.test.weaving.WeavingSpec;
 
 import static org.junit.Assert.assertEquals;
@@ -63,11 +63,11 @@ public class MethodExistsButNotOverrideTest extends WeavingSpec {
                 .inject()
         ;
 
-        CtMethod onResumeMethod = JavassistUtils.findMethod("onResume",
+        CtMethod onResumeMethod = InternalUtils.findMethod("onResume",
                 new String[] {Bundle.class.getCanonicalName()},
                 ctClass.getDeclaredMethods());
         CtMethod delegateMethod =
-                JavassistUtils.findMethod("delegate", new String[0], ctClass.getDeclaredMethods());
+                InternalUtils.findMethod("delegate", new String[0], ctClass.getDeclaredMethods());
         assertNotNull(onResumeMethod);
         assertNotNull(delegateMethod);
 

@@ -12,4 +12,8 @@ public class ParentActivity extends AncestorActivity {
     protected void onResume(Bundle bundle) {
         System.out.println("onResume in parentActivity");
     }
+
+    public void onDestroy(){
+
+    }
 }

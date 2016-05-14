@@ -1,19 +1,18 @@
-package weaver.instrumentation.internal;
+package weaver.instrumentation.injection;
 
 import java.util.Arrays;
 import java.util.List;
 
 import javassist.CtClass;
-import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-public final class JavassistUtils {
+public final class InternalUtils {
 
-    public static boolean hasInterface(CtClass ctClass, CtClass givenInterface) throws
+    static boolean hasInterface(CtClass ctClass, CtClass givenInterface) throws
             NotFoundException {
         for (CtClass interfaceClass : ctClass.getInterfaces()) {
             if (givenInterface.getName().equals(interfaceClass.getName())) return true;
@@ -21,18 +20,11 @@ public final class JavassistUtils {
         return false;
     }
 
-    public static boolean hasField(CtClass ctClass, String fieldName) {
-        for (CtField field : ctClass.getDeclaredFields()) {
-            if (field.getName().equals(fieldName)) return true;
-        }
-        return false;
-    }
-
-    public static CtMethod[] getAllMethods(CtClass ctClass) {
+    static CtMethod[] getAllMethods(CtClass ctClass) {
         return ctClass.getMethods();
     }
 
-    public static CtMethod[] getDeclaredMethods(CtClass ctClass) {
+    static CtMethod[] getDeclaredMethods(CtClass ctClass) {
         return ctClass.getDeclaredMethods();
     }
 
@@ -47,7 +39,7 @@ public final class JavassistUtils {
         return null;
     }
 
-    public static boolean sameSignature(List<String> parameters, CtMethod method)
+    static boolean sameSignature(List<String> parameters, CtMethod method)
             throws NotFoundException {
         CtClass[] methodParameters = method.getParameterTypes();
         if (methodParameters.length == 0 && parameters.size() == 0) return true;
@@ -59,8 +51,12 @@ public final class JavassistUtils {
         return true;
     }
 
-    public static int getModifiers(int defaultModifier, int... newModifiers) {
+    static int getModifiers(int defaultModifier, int... newModifiers) {
         for (int m : newModifiers) defaultModifier |= m;
         return defaultModifier;
+    }
+
+    static String capitalize(final String line) {
+        return Character.toUpperCase(line.charAt(0)) + line.substring(1);
     }
 }
