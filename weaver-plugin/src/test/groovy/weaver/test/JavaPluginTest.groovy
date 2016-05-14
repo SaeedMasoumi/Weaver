@@ -39,7 +39,7 @@ class JavaPluginTest {
         executeTask("clean")
         executeTask("compileJava")
         executeTask("classes")
-        TransformerTask transformerTask = getTask("weaverJavaMain") as TransformerTask
+        TransformerTask transformerTask = getTask("weaverMainJava") as TransformerTask
         assertTrue(transformerTask.didWork)
         File transformedClass = new File(transformerTask.getOutputDir(), "SampleClass.class")
         assertTrue(transformedClass.exists())
