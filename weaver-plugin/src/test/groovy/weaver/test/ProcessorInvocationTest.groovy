@@ -24,7 +24,7 @@ class ProcessorInvocationTest {
         project.repositories {
             jcenter()
             mavenCentral()
-            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+            maven { url "https://oss.jfrog.org/oss-snapshot-local" }
         }
         project.dependencies {
             weaver Dependencies.SAMPLE_PROCESSOR

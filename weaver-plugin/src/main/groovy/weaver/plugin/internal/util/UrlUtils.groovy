@@ -10,8 +10,8 @@ class UrlUtils {
      */
     public static URL normalizeDirectoryForClassLoader(File file) {
         def externalForm = file.toURI().toURL().toExternalForm()
-        if (!externalForm.endsWith(File.separator))
-            externalForm += File.separator
+        if (!externalForm.endsWith('/'))
+            externalForm += '/'
         return new URL(externalForm)
     }
 }

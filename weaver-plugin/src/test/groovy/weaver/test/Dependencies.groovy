@@ -4,5 +4,5 @@ package weaver.test
  */
 class Dependencies {
 
-    static final String SAMPLE_PROCESSOR = "io.saeid.weaver:sample-processor:0.2.1-SNAPSHOT"
+    static final String SAMPLE_PROCESSOR = "io.saeid.weaver:sample-processor:1.0.0-SNAPSHOT"
 }

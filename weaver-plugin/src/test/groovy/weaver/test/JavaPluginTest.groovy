@@ -10,6 +10,7 @@ import weaver.plugin.task.TransformerTask
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
+import static weaver.plugin.internal.util.UrlUtils.normalizeDirectoryForClassLoader
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -26,7 +27,7 @@ class JavaPluginTest {
         project.repositories {
             jcenter()
             mavenCentral()
-            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+            maven { url "https://oss.jfrog.org/oss-snapshot-local" }
         }
         project.dependencies {
             weaver Dependencies.SAMPLE_PROCESSOR
@@ -44,7 +45,9 @@ class JavaPluginTest {
         File transformedClass = new File(transformerTask.getOutputDir(), "SampleClass.class")
         assertTrue(transformedClass.exists())
 
-        ClassLoader cl = transformerTask.getClassLoader()
+        def urls = []
+        urls += normalizeDirectoryForClassLoader(transformerTask.getOutputDir())
+        ClassLoader cl = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
         Object sampleClass = cl.loadClass("SampleClass").newInstance()
         assertThat(sampleClass, instanceOf(Runnable.class))
         Runnable runnable = sampleClass as Runnable
