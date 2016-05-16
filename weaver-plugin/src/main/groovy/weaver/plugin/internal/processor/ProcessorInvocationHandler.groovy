@@ -15,6 +15,7 @@ class ProcessorInvocationHandler {
 
     private Project project
     private ClassLoader parentClassLoader
+    def dependenciesCL = []
 
     public ProcessorInvocationHandler(ClassLoader parentClassLoader, Project project) {
         this.parentClassLoader = parentClassLoader
@@ -43,10 +44,15 @@ class ProcessorInvocationHandler {
                 processorsName.each {
                     processors += dependencyClassLoader.loadClass(it).newInstance() as Processor
                 }
-                dependencyClassLoader.close()
+                dependenciesCL += dependencyClassLoader
             }
         }
         return processors
     }
 
+    void closeAllClassLoaders() {
+        dependenciesCL.each {
+            it.close()
+        }
+    }
 }

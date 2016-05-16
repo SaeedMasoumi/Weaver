@@ -34,15 +34,14 @@ class TransformerTask extends DefaultTask {
 
     URLClassLoader classLoader
     WeaverClassPool pool
+    ProcessorInvocationHandler invocationHandler
 
     @TaskAction
     void startTransforming() {
         int time = System.currentTimeMillis()
         if (!outputDir.exists())
             outputDir.mkdir()
-        classLoader = initClassLoader()
-        pool = createPool(classLoader)
-        def invocationHandler = new ProcessorInvocationHandler(classLoader, project)
+        initResources()
         def processors = invocationHandler.invokeProcessors(project.configurations.weaver)
         if (!processors) {
             debug("No processor found [transforming ignored]")
@@ -56,13 +55,23 @@ class TransformerTask extends DefaultTask {
             successfulTransforming = false
         }
         setDidWork(successfulTransforming)
+        closeResources()
+        int duration = System.currentTimeMillis() - time
+        logger.debug("$name : Weaving takes $duration millis")
+    }
+
+    def initResources() {
+        classLoader = initClassLoader()
+        pool = createPool(classLoader)
+        invocationHandler = new ProcessorInvocationHandler(classLoader, project)
+    }
+
+    def closeResources() {
         //closing all jar files that were opened by the classloader
+        invocationHandler.closeAllClassLoaders()
         classLoader.close()
         //detach all class paths
         pool.close()
-
-        int duration = System.currentTimeMillis() - time
-        logger.debug("$name : Weaving takes $duration millis")
     }
 
     void weaving(ArrayList<Processor> processors) {
