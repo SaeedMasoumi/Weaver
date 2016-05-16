@@ -55,7 +55,7 @@ class TransformerTask extends DefaultTask {
         }
         setDidWork(successfulTransforming)
         int duration = System.currentTimeMillis() - time
-        logger.quiet("$name : Weaving takes $duration millis")
+        logger.debug("$name : Weaving takes $duration millis")
     }
 
     void weaving(ArrayList<Processor> processors) {
