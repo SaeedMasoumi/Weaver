@@ -3,7 +3,6 @@ package weaver.plugin.internal.processor
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.file.FileCollection
 import weaver.common.Processor
 
 import static weaver.plugin.internal.util.DependencyManager.jarToURL
@@ -44,6 +43,7 @@ class ProcessorInvocationHandler {
                 processorsName.each {
                     processors += dependencyClassLoader.loadClass(it).newInstance() as Processor
                 }
+                dependencyClassLoader.close()
             }
         }
         return processors

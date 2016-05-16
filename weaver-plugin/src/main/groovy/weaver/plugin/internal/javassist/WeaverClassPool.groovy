@@ -1,6 +1,7 @@
 package weaver.plugin.internal.javassist
 
 import groovy.transform.CompileStatic
+import javassist.ClassPath
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.Loader
@@ -14,6 +15,7 @@ class WeaverClassPool extends ClassPool {
 
     private ClassLoader parentClassLoader
     private Loader javassistLoader
+    private List<ClassPath> classPaths = new ArrayList<>()
 
     WeaverClassPool(ClassLoader parentClassLoader, boolean useDefaultPath) {
         super(useDefaultPath)
@@ -50,7 +52,11 @@ class WeaverClassPool extends ClassPool {
     }
 
     void appendClassPath(File file) {
-        appendClassPath(file.path)
+        classPaths.add(appendClassPath(file.path))
+    }
+
+    void close() {
+        classPaths.each { it.close() }
     }
 
 }

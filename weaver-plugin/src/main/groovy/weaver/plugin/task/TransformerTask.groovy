@@ -33,6 +33,7 @@ class TransformerTask extends DefaultTask {
     File outputDir
 
     URLClassLoader classLoader
+    WeaverClassPool pool
 
     @TaskAction
     void startTransforming() {
@@ -40,6 +41,7 @@ class TransformerTask extends DefaultTask {
         if (!outputDir.exists())
             outputDir.mkdir()
         classLoader = initClassLoader()
+        pool = createPool(classLoader)
         def invocationHandler = new ProcessorInvocationHandler(classLoader, project)
         def processors = invocationHandler.invokeProcessors(project.configurations.weaver)
         if (!processors) {
@@ -56,12 +58,14 @@ class TransformerTask extends DefaultTask {
         setDidWork(successfulTransforming)
         //closing all jar files that were opened by the classloader
         classLoader.close()
+        //detach all class paths
+        pool.close()
+
         int duration = System.currentTimeMillis() - time
         logger.debug("$name : Weaving takes $duration millis")
     }
 
     void weaving(ArrayList<Processor> processors) {
-        WeaverClassPool pool = createPool()
         WeaveEnvironment env = new WeaveEnvironmentImp(project, pool)
         processors.each {
             it.init(env)
@@ -78,6 +82,7 @@ class TransformerTask extends DefaultTask {
                 }
             }
         }
+
     }
 
     /**
@@ -100,8 +105,8 @@ class TransformerTask extends DefaultTask {
         return classLoader
     }
 
-    def createPool() {
-        WeaverClassPool pool = new WeaverClassPool(classLoader, true)
+    def createPool(ClassLoader parentClassLoader) {
+        pool = new WeaverClassPool(parentClassLoader, true)
         pool.childFirstLookup = true
         pool.appendClassPath(classpath)
         pool.appendClassPath(classesDir)
