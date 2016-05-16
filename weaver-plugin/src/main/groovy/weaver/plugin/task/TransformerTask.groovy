@@ -32,7 +32,7 @@ class TransformerTask extends DefaultTask {
     @OutputDirectory
     File outputDir
 
-    ClassLoader classLoader
+    URLClassLoader classLoader
 
     @TaskAction
     void startTransforming() {
@@ -54,6 +54,8 @@ class TransformerTask extends DefaultTask {
             successfulTransforming = false
         }
         setDidWork(successfulTransforming)
+        //closing all jar files that were opened by the classloader
+        classLoader.close()
         int duration = System.currentTimeMillis() - time
         logger.debug("$name : Weaving takes $duration millis")
     }
@@ -87,14 +89,14 @@ class TransformerTask extends DefaultTask {
         }.files
     }
 
-    ClassLoader initClassLoader() {
+    URLClassLoader initClassLoader() {
         def urls = []
         if (classpath)
             urls += classpath.collect { it.toURI().toURL() }
         if (classesDir)
             urls += normalizeDirectoryForClassLoader(classesDir)
         URLClassLoader classLoader = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
-        Thread.currentThread().contextClassLoader = classLoader
+//        Thread.currentThread().contextClassLoader = classLoader
         return classLoader
     }
 
