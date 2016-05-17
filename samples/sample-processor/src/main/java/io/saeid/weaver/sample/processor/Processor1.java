@@ -1,5 +1,7 @@
 package io.saeid.weaver.sample.processor;
 
+import java.util.Set;
+
 import javassist.CtClass;
 import weaver.processor.WeaverProcessor;
 
@@ -8,29 +10,27 @@ import weaver.processor.WeaverProcessor;
  */
 public class Processor1 extends WeaverProcessor {
 
-    @Override
-    public boolean filter(CtClass ctClass) {
-        return true;
-    }
 
     @Override
-    public void transform(CtClass ctClass) throws Exception {
-        logger.quiet("Start transforming " +
-                ctClass.getSimpleName() +
-                " with " +
-                getClass().getSimpleName());
+    public void transform(Set<? extends CtClass> candidateClasses) throws Exception {
+        for (CtClass ctClass : candidateClasses) {
+            logger.quiet("Start transforming " +
+                    ctClass.getSimpleName() +
+                    " with " +
+                    getClass().getSimpleName());
 
-        instrumentation.startWeaving(ctClass)
-                .insertInterface()
-                .implement(Runnable.class)
-                .inject()
-                .insertMethod("run")
-                .ifExistsButNotOverride()
-                .override("{" +
-                        "System.out.println(\"run\");" +
-                        "}")
-                .inject()
-                .inject()
-        ;
+            instrumentation.startWeaving(ctClass)
+                    .insertInterface()
+                    .implement(Runnable.class)
+                    .inject()
+                    .insertMethod("run")
+                    .ifExistsButNotOverride()
+                    .override("{" +
+                            "System.out.println(\"run\");" +
+                            "}")
+                    .inject()
+                    .inject();
+            writeClass(ctClass);
+        }
     }
 }

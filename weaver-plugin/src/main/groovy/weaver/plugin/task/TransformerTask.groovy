@@ -9,7 +9,7 @@ import org.gradle.api.tasks.TaskAction
 import weaver.common.Processor
 import weaver.common.WeaveEnvironment
 import weaver.plugin.internal.javassist.WeaverClassPool
-import weaver.plugin.internal.processor.ProcessorInvocationHandler
+import weaver.plugin.internal.processor.ProcessorInstantiator
 import weaver.plugin.internal.processor.WeaveEnvironmentImp
 
 import static weaver.plugin.internal.util.UrlUtils.normalizeDirectoryForClassLoader
@@ -34,7 +34,7 @@ class TransformerTask extends DefaultTask {
 
     URLClassLoader classLoader
     WeaverClassPool pool
-    ProcessorInvocationHandler invocationHandler
+    ProcessorInstantiator processorInstantiator
 
     @TaskAction
     void startTransforming() {
@@ -42,54 +42,50 @@ class TransformerTask extends DefaultTask {
         if (!outputDir.exists())
             outputDir.mkdir()
         initResources()
-        def processors = invocationHandler.invokeProcessors(project.configurations.weaver)
+        def processors = processorInstantiator.instantiate(project.configurations.weaver)
         if (!processors) {
-            debug("No processor found [transforming ignored]")
+            log("[Weaver] transformation ignored, no processor has been found")
         }
         boolean successfulTransforming = true
         //weaving
         try {
             weaving(processors)
         } catch (all) {
-            logger.quiet("Weaving exception :[ $all.message ]")
+            log("[Weaver] an exception has been occurred: $all.message ")
             successfulTransforming = false
         }
         setDidWork(successfulTransforming)
-        closeResources()
+        disposeResources()
         int duration = System.currentTimeMillis() - time
-        logger.debug("$name : Weaving takes $duration millis")
+        log("[Weaver]: $name task takes $duration millis")
     }
 
     def initResources() {
         classLoader = initClassLoader()
         pool = createPool(classLoader)
-        invocationHandler = new ProcessorInvocationHandler(classLoader, project)
+        processorInstantiator = new ProcessorInstantiator(classLoader, project)
     }
 
-    def closeResources() {
-        //closing all jar files that were opened by the classloader
-        invocationHandler.closeAllClassLoaders()
+    def disposeResources() {
+        //closing all jar files that were opened by the classLoaders
+        processorInstantiator.closeAllClassLoaders()
         classLoader.close()
         //detach all class paths
         pool.close()
     }
 
     void weaving(ArrayList<Processor> processors) {
-        WeaveEnvironment env = new WeaveEnvironmentImp(project, pool)
+        WeaveEnvironment env = new WeaveEnvironmentImp(project, pool, outputDir)
         processors.each {
             it.init(env)
         }
-        def classes = getClassesFiles()
-        classes.each {
-            CtClass ctClass = pool.get(it)
-            processors.each {
-                if (it.filter(ctClass)) {
-                    ctClass.defrost()
-                    it.transform(ctClass)
-                    ctClass.writeFile(outputDir.path)
-
-                }
-            }
+        def classFiles = getClassFiles()
+        Set<CtClass> classesSet = new HashSet<>();
+        classFiles.each {
+            classesSet.add(pool.get(it))
+        }
+        processors.each {
+            it.transform(classesSet)
         }
 
     }
@@ -97,7 +93,7 @@ class TransformerTask extends DefaultTask {
     /**
      * @return Returns all .class files from build directory.
      */
-    Set<File> getClassesFiles() {
+    Set<File> getClassFiles() {
         return project.fileTree(classesDir).matching {
             include '**/*.class'
         }.files
@@ -122,7 +118,7 @@ class TransformerTask extends DefaultTask {
         return pool
     }
 
-    void debug(String message) {
-        logger.debug(message)
+    void log(String message) {
+        logger.info(message)
     }
 }

@@ -11,13 +11,13 @@ import static weaver.plugin.internal.util.MetaInfUtils.extractProcessorsName
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class ProcessorInvocationHandler {
+class ProcessorInstantiator {
 
     private Project project
     private ClassLoader parentClassLoader
     def dependenciesCL = []
 
-    public ProcessorInvocationHandler(ClassLoader parentClassLoader, Project project) {
+    public ProcessorInstantiator(ClassLoader parentClassLoader, Project project) {
         this.parentClassLoader = parentClassLoader
         this.project = project
     }
@@ -32,7 +32,7 @@ class ProcessorInvocationHandler {
      * @param configuration Given configuration for getting dependencies
      * @return Returns instantiated processors.
      */
-    public ArrayList<Processor> invokeProcessors(Configuration configuration) {
+    public ArrayList<Processor> instantiate(Configuration configuration) {
         def processors = []
         configuration.dependencies.each { Dependency dependency ->
             //get all dependencies including current and its subset

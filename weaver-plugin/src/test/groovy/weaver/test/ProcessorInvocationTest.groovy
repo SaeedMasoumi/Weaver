@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Test
 import weaver.common.Processor
-import weaver.plugin.internal.processor.ProcessorInvocationHandler
+import weaver.plugin.internal.processor.ProcessorInstantiator
 
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
@@ -30,8 +30,8 @@ class ProcessorInvocationTest {
             weaver Dependencies.SAMPLE_PROCESSOR
         }
         def time = System.currentTimeMillis()
-        ProcessorInvocationHandler pih = new ProcessorInvocationHandler(Thread.currentThread().contextClassLoader, project)
-        def processors = pih.invokeProcessors(project.configurations.weaver)
+        ProcessorInstantiator pi = new ProcessorInstantiator(Thread.currentThread().contextClassLoader, project)
+        def processors = pi.instantiate(project.configurations.weaver)
         def names = processors.collect({ it.class.canonicalName })
         assertTrue(names.contains("io.saeid.weaver.sample.processor.Processor1"))
         assertTrue(names.contains("io.saeid.weaver.sample.processor.Processor2"))

@@ -14,10 +14,12 @@ import weaver.plugin.internal.javassist.WeaverClassPool
 class WeaveEnvironmentImp implements WeaveEnvironment {
     private Logger logger
     private ClassPool pool
+    private File outputDir
 
-    WeaveEnvironmentImp(Project project, WeaverClassPool pool) {
+    WeaveEnvironmentImp(Project project, WeaverClassPool pool, File outputDir) {
         logger = new LoggerImp(project.logger)
         this.pool = pool
+        this.outputDir = outputDir
     }
 
     @Override
@@ -28,5 +30,10 @@ class WeaveEnvironmentImp implements WeaveEnvironment {
     @Override
     ClassPool getClassPool() {
         return pool
+    }
+
+    @Override
+    File getOutputDir() {
+        return outputDir
     }
 }

@@ -1,5 +1,7 @@
 package weaver.common;
 
+import java.util.Set;
+
 import javassist.CtClass;
 
 /**
@@ -9,7 +11,7 @@ public interface Processor {
 
     void init(WeaveEnvironment processingEnvironment);
 
-    boolean filter(CtClass candidateClass);
+    void transform(Set<? extends CtClass> candidateClasses) throws Exception;
 
-    void transform(CtClass candidateClass) throws Exception;
+    boolean writeClass(CtClass candidateClass);
 }

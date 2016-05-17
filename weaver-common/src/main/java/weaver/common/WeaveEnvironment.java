@@ -1,5 +1,7 @@
 package weaver.common;
 
+import java.io.File;
+
 import javassist.ClassPool;
 
 /**
@@ -14,4 +16,9 @@ public interface WeaveEnvironment {
     Logger getLogger();
 
     ClassPool getClassPool();
+
+    /**
+     * @return Returns the output directory which contains all transformed classes.
+     */
+    File getOutputDir();
 }
