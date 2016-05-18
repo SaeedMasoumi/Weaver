@@ -32,9 +32,11 @@ class TransformerTask extends DefaultTask {
     @OutputDirectory
     File outputDir
 
-    URLClassLoader classLoader
-    WeaverClassPool pool
-    ProcessorInstantiator processorInstantiator
+    String configurationName
+
+    private URLClassLoader classLoader
+    private WeaverClassPool pool
+    private ProcessorInstantiator processorInstantiator
 
     @TaskAction
     void startTransforming() {
@@ -42,7 +44,8 @@ class TransformerTask extends DefaultTask {
         if (!outputDir.exists())
             outputDir.mkdir()
         initResources()
-        def processors = processorInstantiator.instantiate(project.configurations.weaver)
+        def configuration = project.configurations.getByName(configurationName)
+        def processors = processorInstantiator.instantiate(configuration)
         if (!processors) {
             log("[Weaver] transformation ignored, no processor has been found")
         }

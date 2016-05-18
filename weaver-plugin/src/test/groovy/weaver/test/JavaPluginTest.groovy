@@ -54,7 +54,6 @@ class JavaPluginTest {
         runnable.run()
     }
 
-
     def executeTask(String name) {
         project.getTasks().getByName(name).execute();
     }

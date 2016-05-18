@@ -11,13 +11,15 @@ import org.gradle.api.plugins.JavaPlugin
 class WeaverPlugin implements Plugin<Project> {
 
     static final String WEAVER_EXT_NAME = "weaver"
-    static final String WEAVER_CONF_NAME = "weaver"
+    static final String WEAVER_CONFIGURATION = "weaver"
+    static final String TEST_WEAVER_CONFIGURATION = "testWeaver"
 
     @Override
     void apply(Project project) {
         //Add weaver extension
         project.extensions.create(WEAVER_EXT_NAME, WeaverExtension)
-        project.configurations.create(WEAVER_CONF_NAME)
+        project.configurations.create(WEAVER_CONFIGURATION)
+        project.configurations.create(TEST_WEAVER_CONFIGURATION)
         //Apply weaver java plugin
         project.plugins.withType(JavaPlugin) {
             project.apply plugin: WeaverPluginJava
