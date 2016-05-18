@@ -34,9 +34,9 @@ class TransformerTask extends DefaultTask {
 
     String configurationName
 
-    private URLClassLoader classLoader
-    private WeaverClassPool pool
-    private ProcessorInstantiator processorInstantiator
+    URLClassLoader classLoader
+    WeaverClassPool pool
+    ProcessorInstantiator processorInstantiator
 
     @TaskAction
     void startTransforming() {
