@@ -1,25 +1,31 @@
-package weaver.plugin.internal.processor
+package weaver.plugin.processor
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import weaver.common.Processor
+import weaver.plugin.model.TransformBundle
+import weaver.plugin.util.Disposable
 
-import static weaver.plugin.internal.util.DependencyManager.jarToURL
-import static weaver.plugin.internal.util.MetaInfUtils.extractProcessorsName
+import static weaver.plugin.util.DependencyManager.jarToURL
+import static weaver.plugin.util.MetaInfUtils.extractProcessorsName
 
 /**
+ * This class is responsible to instantiate all processors in weaver or testWeaver scopes.
+ *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class ProcessorInstantiator {
+class ProcessorInstantiator implements Disposable {
 
-    private Project project
-    private ClassLoader parentClassLoader
+    Project project
+    Configuration configuration
+    ClassLoader parentClassLoader
     def dependenciesCL = []
 
-    public ProcessorInstantiator(ClassLoader parentClassLoader, Project project) {
-        this.parentClassLoader = parentClassLoader
-        this.project = project
+    public ProcessorInstantiator(TransformBundle bundle) {
+        project = bundle.project
+        configuration = bundle.configuration
+        parentClassLoader = bundle.rootClassLoader
     }
 
     /**
@@ -32,7 +38,7 @@ class ProcessorInstantiator {
      * @param configuration Given configuration for getting dependencies
      * @return Returns instantiated processors.
      */
-    public ArrayList<Processor> instantiate(Configuration configuration) {
+    public ArrayList<Processor> instantiate() {
         def processors = []
         configuration.dependencies.each { Dependency dependency ->
             //get all dependencies including current and its subset
@@ -54,5 +60,10 @@ class ProcessorInstantiator {
         dependenciesCL.each {
             it.close()
         }
+    }
+
+    @Override
+    void dispose() {
+        closeAllClassLoaders()
     }
 }

@@ -1,24 +1,22 @@
-package weaver.plugin.internal.javassist
+package weaver.plugin.javassist
 
 import groovy.transform.CompileStatic
-import javassist.ClassPath
-import javassist.ClassPool
-import javassist.CtClass
-import javassist.Loader
+import javassist.*
 import org.gradle.api.file.FileCollection
+import weaver.plugin.util.Disposable
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 @CompileStatic
-class WeaverClassPool extends ClassPool {
+class WeaverClassPool extends ClassPool implements Disposable {
 
     private ClassLoader parentClassLoader
     private Loader javassistLoader
     private List<ClassPath> classPaths = new ArrayList<>()
 
-    WeaverClassPool(ClassLoader parentClassLoader, boolean useDefaultPath) {
-        super(useDefaultPath)
+    WeaverClassPool(ClassLoader parentClassLoader) {
+        super(true)
         this.parentClassLoader = parentClassLoader
     }
 
@@ -51,12 +49,32 @@ class WeaverClassPool extends ClassPool {
         }
     }
 
-    void appendClassPath(File file) {
-        classPaths.add(appendClassPath(file.path))
+    ClassPath appendClassPath(File file) {
+        return appendClassPath(file.absolutePath)
     }
 
-    void close() {
+    @Override
+    ClassPath appendClassPath(ClassPath cp) {
+        return storeClassPath(super.appendClassPath(cp))
+    }
+
+    @Override
+    ClassPath appendClassPath(String pathname) throws NotFoundException {
+        return storeClassPath(super.appendClassPath(pathname))
+    }
+
+    @Override
+    ClassPath appendSystemPath() {
+        return storeClassPath(super.appendSystemPath())
+    }
+
+    ClassPath storeClassPath(ClassPath classpath) {
+        classPaths.add(classpath)
+        return classpath
+    }
+
+    @Override
+    void dispose() {
         classPaths.each { it.close() }
     }
-
 }

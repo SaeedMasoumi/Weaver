@@ -10,7 +10,7 @@ import weaver.plugin.task.TransformerTask
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
-import static weaver.plugin.internal.util.UrlUtils.normalizeDirectoryForClassLoader
+import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)

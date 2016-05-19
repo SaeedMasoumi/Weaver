@@ -1,11 +1,10 @@
-package weaver.plugin.internal.processor
+package weaver.plugin.processor
 
 import groovy.transform.CompileStatic
 import javassist.ClassPool
-import org.gradle.api.Project
 import weaver.common.Logger
 import weaver.common.WeaveEnvironment
-import weaver.plugin.internal.javassist.WeaverClassPool
+import weaver.plugin.javassist.WeaverClassPool
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -16,8 +15,8 @@ class WeaveEnvironmentImp implements WeaveEnvironment {
     private ClassPool pool
     private File outputDir
 
-    WeaveEnvironmentImp(Project project, WeaverClassPool pool, File outputDir) {
-        logger = new LoggerImp(project.logger)
+    WeaveEnvironmentImp(org.gradle.api.logging.Logger logger, WeaverClassPool pool, File outputDir) {
+        this.logger = new LoggerImp(logger)
         this.pool = pool
         this.outputDir = outputDir
     }

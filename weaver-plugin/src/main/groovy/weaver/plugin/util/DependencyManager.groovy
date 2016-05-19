@@ -1,4 +1,4 @@
-package weaver.plugin.internal.util
+package weaver.plugin.util
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */

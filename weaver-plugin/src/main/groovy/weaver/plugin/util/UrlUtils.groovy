@@ -1,4 +1,4 @@
-package weaver.plugin.internal.util
+package weaver.plugin.util
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -10,7 +10,7 @@ class UrlUtils {
      */
     public static URL normalizeDirectoryForClassLoader(File file) {
         def externalForm = file.toURI().toURL().toExternalForm()
-        if (!externalForm.endsWith('/'))
+        if (!externalForm.endsWith(".jar") && !externalForm.endsWith('/'))
             externalForm += '/'
         return new URL(externalForm)
     }

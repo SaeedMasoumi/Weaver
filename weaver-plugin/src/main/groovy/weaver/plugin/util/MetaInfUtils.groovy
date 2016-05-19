@@ -1,4 +1,4 @@
-package weaver.plugin.internal.util
+package weaver.plugin.util
 
 import org.gradle.api.Project
 

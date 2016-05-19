@@ -1,18 +1,14 @@
 package weaver.plugin.task
 
-import javassist.CtClass
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import weaver.common.Processor
-import weaver.common.WeaveEnvironment
-import weaver.plugin.internal.javassist.WeaverClassPool
-import weaver.plugin.internal.processor.ProcessorInstantiator
-import weaver.plugin.internal.processor.WeaveEnvironmentImp
+import weaver.plugin.javassist.WeaverClassPool
+import weaver.plugin.processor.ProcessorInstantiator
 
-import static weaver.plugin.internal.util.UrlUtils.normalizeDirectoryForClassLoader
+import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
@@ -41,23 +37,9 @@ class TransformerTask extends DefaultTask {
     @TaskAction
     void startTransforming() {
         int time = System.currentTimeMillis()
-        if (!outputDir.exists())
-            outputDir.mkdir()
+
         initResources()
-        def configuration = project.configurations.getByName(configurationName)
-        def processors = processorInstantiator.instantiate(configuration)
-        if (!processors) {
-            log("[Weaver] transformation ignored, no processor has been found")
-        }
-        boolean successfulTransforming = true
-        //weaving
-        try {
-            weaving(processors)
-        } catch (all) {
-            log("[Weaver] an exception has been occurred: $all.message ")
-            successfulTransforming = false
-        }
-        setDidWork(successfulTransforming)
+
         disposeResources()
         int duration = System.currentTimeMillis() - time
         log("[Weaver]: $name task takes $duration millis")
@@ -77,21 +59,6 @@ class TransformerTask extends DefaultTask {
         pool.close()
     }
 
-    void weaving(ArrayList<Processor> processors) {
-        WeaveEnvironment env = new WeaveEnvironmentImp(project, pool, outputDir)
-        processors.each {
-            it.init(env)
-        }
-        def classFiles = getClassFiles()
-        Set<CtClass> classesSet = new HashSet<>();
-        classFiles.each {
-            classesSet.add(pool.get(it))
-        }
-        processors.each {
-            it.transform(classesSet)
-        }
-
-    }
 
     /**
      * @return Returns all .class files from build directory.

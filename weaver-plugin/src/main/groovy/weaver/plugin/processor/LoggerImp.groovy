@@ -1,4 +1,4 @@
-package weaver.plugin.internal.processor
+package weaver.plugin.processor
 
 import groovy.transform.CompileStatic
 import weaver.common.Logger
