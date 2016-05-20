@@ -1,5 +1,6 @@
 package weaver.plugin.model
 
+import groovy.transform.builder.Builder
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import weaver.plugin.javassist.WeaverClassPool
@@ -7,6 +8,7 @@ import weaver.plugin.javassist.WeaverClassPool
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
+@Builder
 class TransformBundleImp implements TransformBundle {
 
     Project project
@@ -49,6 +51,6 @@ class TransformBundleImp implements TransformBundle {
     @Override
     void dispose() {
         getRootClassLoader().close()
-        getClassPool().close()
+        getClassPool().dispose()
     }
 }

@@ -1,6 +1,5 @@
 package weaver.plugin.javassist
 
-import groovy.transform.CompileStatic
 import javassist.*
 import org.gradle.api.file.FileCollection
 import weaver.plugin.util.Disposable
@@ -8,12 +7,11 @@ import weaver.plugin.util.Disposable
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-@CompileStatic
 class WeaverClassPool extends ClassPool implements Disposable {
 
-    private ClassLoader parentClassLoader
-    private Loader javassistLoader
-    private List<ClassPath> classPaths = new ArrayList<>()
+    ClassLoader parentClassLoader
+    Loader javassistLoader
+    List<ClassPath> classPaths
 
     WeaverClassPool(ClassLoader parentClassLoader) {
         super(true)
@@ -69,12 +67,14 @@ class WeaverClassPool extends ClassPool implements Disposable {
     }
 
     ClassPath storeClassPath(ClassPath classpath) {
+        if (!classPaths) classPaths = new ArrayList<>()
         classPaths.add(classpath)
         return classpath
     }
 
     @Override
     void dispose() {
-        classPaths.each { it.close() }
+        if (classPaths)
+            classPaths.each { it.close() }
     }
 }

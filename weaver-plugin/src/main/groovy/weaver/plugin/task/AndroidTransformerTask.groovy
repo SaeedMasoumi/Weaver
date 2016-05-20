@@ -21,12 +21,12 @@ import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class AndroidTransformer extends Transform {
+class AndroidTransformerTask extends Transform {
 
     Project project
     Logger logger
 
-    AndroidTransformer(Project project) {
+    AndroidTransformerTask(Project project) {
         this.project = project
         this.logger = project.logger
     }
@@ -71,19 +71,17 @@ class AndroidTransformer extends Transform {
     }
 
     TransformBundle createTransformBundle(TransformInvocation transformInvocation) {
-        TransformBundle bundle = new TransformBundleImp()
-        bundle.setProject(project)
-        bundle.setConfiguration(project.configurations.getByName(WeaverPlugin.WEAVER_CONFIGURATION))
-        //
         URLClassLoader rootClassLoader = createClassLoader(transformInvocation.referencedInputs)
-        bundle.setRootClassLoader(rootClassLoader)
-        //creating javassist class pool
         WeaverClassPool pool = createClassPool(rootClassLoader, transformInvocation.inputs, transformInvocation.referencedInputs)
         appendBootClassPath(pool)
-        bundle.setClassPool(pool)
-        //
-        bundle.setClassFiles(getClassFiles(transformInvocation.inputs))
-        bundle.setOutputDir(getOutputFile(transformInvocation.outputProvider))
+        TransformBundle bundle = TransformBundleImp.builder()
+                .project(project)
+                .configuration(project.configurations.getByName(WeaverPlugin.WEAVER_CONFIGURATION))
+                .rootClassLoader(rootClassLoader)
+                .classPool(pool)
+                .classFiles(getClassFiles(transformInvocation.inputs))
+                .outputDir(getOutputFile(transformInvocation.outputProvider))
+                .build()
         return bundle
     }
 
@@ -113,6 +111,15 @@ class AndroidTransformer extends Transform {
         }
     }
 
+    /**
+     * Creates a {@link javassist.ClassPool}. all class paths in source code,
+     * dependencies, android boot class path and system class path will be appended to  class pool.
+     *
+     * @param classLoader Class loader of class pool.
+     * @param inputs the source inputs provided by transform API.
+     * @param referencedInputs the dependencies inputs provided by transform API.
+     * @return returns a {@link WeaverClassPool}
+     */
     private
     static WeaverClassPool createClassPool(URLClassLoader classLoader, Collection<TransformInput> inputs, Collection<TransformInput> referencedInputs) {
         WeaverClassPool pool = new WeaverClassPool(classLoader)
@@ -137,6 +144,10 @@ class AndroidTransformer extends Transform {
         return pool
     }
 
+    /**
+     * @param inputs the inputs provided by transform API.
+     * @return Returns all .class files from project source set.
+     */
     private static Set<File> getClassFiles(Collection<TransformInput> inputs) {
         Set<File> classFiles = new HashSet<File>()
         inputs.each {
@@ -159,6 +170,10 @@ class AndroidTransformer extends Transform {
         return classFiles
     }
 
+    /**
+     * @param outputProvider
+     * @return Returns a directory which will store transformed classes.
+     */
     private File getOutputFile(TransformOutputProvider outputProvider) {
         return outputProvider.getContentLocation(
                 'weaver', getInputTypes(), getScopes(), Format.DIRECTORY)

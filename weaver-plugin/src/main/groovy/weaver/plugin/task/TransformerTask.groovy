@@ -6,7 +6,9 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import weaver.plugin.javassist.WeaverClassPool
-import weaver.plugin.processor.ProcessorInstantiator
+import weaver.plugin.model.TransformBundle
+import weaver.plugin.model.TransformBundleImp
+import weaver.plugin.processor.ProcessorInvocator
 
 import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 
@@ -30,35 +32,35 @@ class TransformerTask extends DefaultTask {
 
     String configurationName
 
-    URLClassLoader classLoader
-    WeaverClassPool pool
-    ProcessorInstantiator processorInstantiator
-
     @TaskAction
     void startTransforming() {
         int time = System.currentTimeMillis()
 
-        initResources()
-
-        disposeResources()
+        TransformBundle bundle = createTransformBundle()
+        ProcessorInvocator invocator = new ProcessorInvocator(bundle)
+        try {
+            invocator.execute()
+        } catch (all) {
+            log "an error occurred during bytecode weaving [ $all.message ] "
+        }
+        invocator.dispose()
+        bundle.dispose()
         int duration = System.currentTimeMillis() - time
         log("[Weaver]: $name task takes $duration millis")
     }
 
-    def initResources() {
-        classLoader = initClassLoader()
-        pool = createPool(classLoader)
-        processorInstantiator = new ProcessorInstantiator(classLoader, project)
+    TransformBundle createTransformBundle() {
+        URLClassLoader classLoader = createClassLoader()
+        def bundle = TransformBundleImp.builder()
+                .project(project)
+                .configuration(project.configurations.getByName(configurationName))
+                .classFiles(getClassFiles())
+                .rootClassLoader(classLoader)
+                .classPool(createPool(classLoader))
+                .outputDir(outputDir)
+                .build()
+        bundle
     }
-
-    def disposeResources() {
-        //closing all jar files that were opened by the classLoaders
-        processorInstantiator.closeAllClassLoaders()
-        classLoader.close()
-        //detach all class paths
-        pool.close()
-    }
-
 
     /**
      * @return Returns all .class files from build directory.
@@ -69,23 +71,22 @@ class TransformerTask extends DefaultTask {
         }.files
     }
 
-    URLClassLoader initClassLoader() {
+    URLClassLoader createClassLoader() {
         def urls = []
         if (classpath)
             urls += classpath.collect { it.toURI().toURL() }
         if (classesDir)
             urls += normalizeDirectoryForClassLoader(classesDir)
         URLClassLoader classLoader = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
-//        Thread.currentThread().contextClassLoader = classLoader
         return classLoader
     }
 
-    def createPool(ClassLoader parentClassLoader) {
-        pool = new WeaverClassPool(parentClassLoader, true)
+    WeaverClassPool createPool(ClassLoader parentClassLoader) {
+        WeaverClassPool pool = new WeaverClassPool(parentClassLoader)
         pool.childFirstLookup = true
         pool.appendClassPath(classpath)
         pool.appendClassPath(classesDir)
-        return pool
+        pool
     }
 
     void log(String message) {

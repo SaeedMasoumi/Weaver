@@ -19,10 +19,11 @@ import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
  */
 class ProcessorInvocatorTest {
     TransformBundle bundle
+    Project project
 
     @Before
     void "initialize sample project"() {
-        Project project = ProjectBuilder.builder().withProjectDir(Directories.SAMPLE_PROJECT).build()
+        project = ProjectBuilder.builder().withProjectDir(Directories.SAMPLE_PROJECT).build()
         project.apply plugin: 'java'
         project.configurations.create("weaver")
         project.repositories {
@@ -34,14 +35,22 @@ class ProcessorInvocatorTest {
             weaver Dependencies.SAMPLE_PROCESSOR
         }
         project.evaluate()
-        bundle = new TransformBundleImp()
-        bundle.setProject(project)
-        bundle.setOutputDir(project.file("$project.buildDir/weaver/main"))
-        bundle.setConfiguration(project.configurations.getByName("weaver"))
         def urls = []
-        bundle.setRootClassLoader(new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader))
-        bundle.setClassPool(new WeaverClassPool(bundle.getRootClassLoader()))
-        bundle.setClassFiles(ImmutableSet.<File> of(project.file("$project.buildDir/weaver/main/SampleClass.class")))
+        def classLoader = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
+        Set<File> classFiles = ImmutableSet.<File> of(project.file("$project.buildDir/classes/main/SampleClass.class"))
+        def pool = new WeaverClassPool(classLoader)
+        bundle = TransformBundleImp
+                .builder()
+                .project(project)
+                .configuration(project.configurations.getByName("weaver"))
+                .rootClassLoader(classLoader)
+                .classPool(pool)
+                .classFiles(classFiles)
+                .outputDir(project.file("$project.buildDir/weaver/main"))
+                .build()
+        executeTask("clean")
+        executeTask("compileJava")
+        executeTask("classes")
     }
 
 
@@ -58,4 +67,7 @@ class ProcessorInvocatorTest {
         runnable.run()
     }
 
+    def executeTask(String name) {
+        project.getTasks().getByName(name).execute();
+    }
 }
