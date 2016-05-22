@@ -37,4 +37,7 @@ class WeaverPlugin implements Plugin<Project> {
         }
     }
 
+    static WeaverExtension getWeaverExtension(Project project) {
+        return project.extensions.getByName(WEAVER_EXT_NAME) as WeaverExtension
+    }
 }

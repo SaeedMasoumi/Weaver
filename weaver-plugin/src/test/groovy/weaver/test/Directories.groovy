@@ -5,10 +5,11 @@ package weaver.test
  */
 
 class Directories {
-    static final File BUILD_ROOT = new File(getClass().getResource("/").toURI()).parentFile.parentFile
+    static
+    final File BUILD_ROOT = new File(getClass().getResource("/").toURI()).parentFile.parentFile
     static final File OUTPUT_DIR = new File(BUILD_ROOT, "functionalTest")
-    static final File SAMPLE_PROJECT = new File(BUILD_ROOT, "resources/test/SampleProject")
-    static final File SAMPLE_ANDROID_PROJECT = new File(BUILD_ROOT, "resources/test/SampleAndroidProject")
+    static final File PROJECT_TEMPLATE = new File(BUILD_ROOT, "../src/test/project-template")
+    static final File SAMPLE_PROJECT = new File(PROJECT_TEMPLATE, "SampleProject")
     static {
         if (!OUTPUT_DIR.exists())
             OUTPUT_DIR.mkdir()

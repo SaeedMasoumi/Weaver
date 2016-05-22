@@ -23,5 +23,6 @@ dependencies {
     compile deps.android //TODO provided
 
     testCompile deps.junit
+    testCompile gradleTestKit()
 
 }

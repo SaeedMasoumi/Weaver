@@ -32,6 +32,7 @@ public abstract class WeaverProcessor implements Processor {
         try {
             candidateClass.writeFile(outputPath);
             candidateClass.defrost();//allows other processors to modify this class
+            logger.info("Writing " + candidateClass.getSimpleName() + " into " + outputPath);
         } catch (CannotCompileException e) {
             logger.info(e.getMessage());
             return false;

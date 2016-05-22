@@ -21,7 +21,7 @@ import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class AndroidTransformerTask extends Transform {
+public class AndroidTransformerTask extends Transform {
 
     Project project
     Logger logger
@@ -68,6 +68,7 @@ class AndroidTransformerTask extends Transform {
         }
         invocator.dispose()
         bundle.dispose()
+        log "ClassPool and ClassLoaders are disposed successfully"
     }
 
     TransformBundle createTransformBundle(TransformInvocation transformInvocation) {
@@ -98,8 +99,8 @@ class AndroidTransformerTask extends Transform {
         //TODO check whether it's needed to add classes directory or not
         project.android.bootClasspath.each {
             String path = it.absolutePath
-            urls += path
-            log "Add boot class $path to root class loader."
+            urls += project.file(path).toURI().toURL()
+            log "Add android boot class [$path] to root class loader."
         }
         return new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
     }
