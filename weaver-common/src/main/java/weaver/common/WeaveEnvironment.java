@@ -10,11 +10,15 @@ import javassist.ClassPool;
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 public interface WeaveEnvironment {
+
     /**
      * @return Returns the logger.
      */
     Logger getLogger();
 
+    /**
+     * @return Returns the ClassPool.
+     */
     ClassPool getClassPool();
 
     /**

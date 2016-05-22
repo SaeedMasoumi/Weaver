@@ -10,6 +10,8 @@ import weaver.common.WeaveEnvironment;
 import weaver.instrumentation.Instrumentation;
 
 /**
+ * A concrete implementation of {@link Processor}. It also provides {@link Instrumentation} utilities.
+ *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 public abstract class WeaverProcessor implements Processor {
