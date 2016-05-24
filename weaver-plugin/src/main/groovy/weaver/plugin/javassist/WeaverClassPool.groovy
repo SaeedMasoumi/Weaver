@@ -5,6 +5,8 @@ import org.gradle.api.file.FileCollection
 import weaver.plugin.util.Disposable
 
 /**
+ * It is a  {@link ClassPool} with some more features for opening class files, it also implements {@link Disposable}
+ * to close all class paths at the end of transformation.
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 class WeaverClassPool extends ClassPool implements Disposable {

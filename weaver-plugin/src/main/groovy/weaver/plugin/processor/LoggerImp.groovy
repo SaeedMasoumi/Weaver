@@ -4,6 +4,8 @@ import groovy.transform.CompileStatic
 import weaver.common.Logger
 
 /**
+ * A concrete implementation of {@link Logger}. It uses {@link org.gradle.api.Project#getLogger()}.
+ *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 @CompileStatic

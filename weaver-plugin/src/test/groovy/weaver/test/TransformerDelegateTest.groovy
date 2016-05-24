@@ -8,7 +8,7 @@ import org.junit.Test
 import weaver.plugin.javassist.WeaverClassPool
 import weaver.plugin.model.TransformBundle
 import weaver.plugin.model.TransformBundleImp
-import weaver.plugin.processor.ProcessorInvocator
+import weaver.plugin.transform.TransformerDelegate
 
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
@@ -17,7 +17,7 @@ import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class ProcessorInvocatorTest {
+class TransformerDelegateTest {
     TransformBundle bundle
     Project project
 
@@ -56,7 +56,7 @@ class ProcessorInvocatorTest {
 
     @Test
     void "test"() {
-        ProcessorInvocator pi = new ProcessorInvocator(bundle)
+        TransformerDelegate pi = new TransformerDelegate(bundle)
         pi.execute()
         def urls = []
         urls += normalizeDirectoryForClassLoader(bundle.getOutputDir())

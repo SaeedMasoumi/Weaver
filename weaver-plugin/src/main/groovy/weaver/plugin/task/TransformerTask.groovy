@@ -8,7 +8,7 @@ import org.gradle.api.tasks.TaskAction
 import weaver.plugin.javassist.WeaverClassPool
 import weaver.plugin.model.TransformBundle
 import weaver.plugin.model.TransformBundleImp
-import weaver.plugin.processor.ProcessorInvocator
+import weaver.plugin.transform.TransformerDelegate
 
 import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 
@@ -18,8 +18,9 @@ import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 class TransformerTask extends DefaultTask {
 
     FileCollection classpath
+
     /**
-     * A folder which .class files exist there.
+     * A folder which contains all .class files.
      */
     @InputDirectory
     File classesDir
@@ -37,13 +38,13 @@ class TransformerTask extends DefaultTask {
         int time = System.currentTimeMillis()
 
         TransformBundle bundle = createTransformBundle()
-        ProcessorInvocator invocator = new ProcessorInvocator(bundle)
+        TransformerDelegate transformer = new TransformerDelegate(bundle)
         try {
-            invocator.execute()
+            transformer.execute()
         } catch (all) {
             log "an error occurred during bytecode weaving [ $all.message ] "
         }
-        invocator.dispose()
+        transformer.dispose()
         bundle.dispose()
         int duration = System.currentTimeMillis() - time
         log("[Weaver]: $name task takes $duration millis")

@@ -11,7 +11,7 @@ import weaver.plugin.WeaverPlugin
 import weaver.plugin.javassist.WeaverClassPool
 import weaver.plugin.model.TransformBundle
 import weaver.plugin.model.TransformBundleImp
-import weaver.plugin.processor.ProcessorInvocator
+import weaver.plugin.transform.TransformerDelegate
 
 import java.util.jar.JarFile
 
@@ -60,13 +60,13 @@ public class AndroidTransformerTask extends Transform {
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         TransformBundle bundle = createTransformBundle(transformInvocation)
-        ProcessorInvocator invocator = new ProcessorInvocator(bundle)
+        TransformerDelegate transformer = new TransformerDelegate(bundle)
         try {
-            invocator.execute()
+            transformer.execute()
         } catch (all) {
-            log "an error occurred during bytecode weaving [ $all.message ] "
+            log "an error occurred during transformation [ $all.message ] "
         }
-        invocator.dispose()
+        transformer.dispose()
         bundle.dispose()
         log "ClassPool and ClassLoaders are disposed successfully"
     }

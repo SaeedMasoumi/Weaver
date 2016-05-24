@@ -6,6 +6,7 @@ import javassist.CannotCompileException;
 import javassist.CtClass;
 import weaver.common.Logger;
 import weaver.common.Processor;
+import weaver.common.Scope;
 import weaver.common.WeaveEnvironment;
 import weaver.instrumentation.Instrumentation;
 
@@ -22,6 +23,9 @@ public abstract class WeaverProcessor implements Processor {
 
     private String outputPath;
 
+    /**
+     * {@inheritDoc}
+     */
     public synchronized void init(WeaveEnvironment env) {
         weaveEnvironment = env;
         logger = env.getLogger();
@@ -29,6 +33,17 @@ public abstract class WeaverProcessor implements Processor {
         outputPath = weaveEnvironment.getOutputDir().getPath();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Scope getScope() {
+        return Scope.PROJECT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean writeClass(CtClass candidateClass) {
         try {

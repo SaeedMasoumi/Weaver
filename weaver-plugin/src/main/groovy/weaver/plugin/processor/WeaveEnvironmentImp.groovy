@@ -7,6 +7,8 @@ import weaver.common.WeaveEnvironment
 import weaver.plugin.javassist.WeaverClassPool
 
 /**
+ * A concrete implementation of {@link WeaveEnvironment}
+ *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
 @CompileStatic
