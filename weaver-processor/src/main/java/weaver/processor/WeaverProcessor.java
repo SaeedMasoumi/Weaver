@@ -30,7 +30,11 @@ public abstract class WeaverProcessor implements Processor {
         weaveEnvironment = env;
         logger = env.getLogger();
         instrumentation = new Instrumentation(env.getClassPool());
-        outputPath = weaveEnvironment.getOutputDir().getPath();
+        try {
+            outputPath = weaveEnvironment.getOutputDir().getCanonicalPath();
+        } catch (IOException e) {
+            outputPath = weaveEnvironment.getOutputDir().getAbsolutePath();
+        }
     }
 
     /**
