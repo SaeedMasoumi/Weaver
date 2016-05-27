@@ -26,6 +26,10 @@ class TransformerDelegate implements Disposable {
     }
 
     void execute() {
+        execute(null)
+    }
+
+    void execute(doLast) {
         def processors = processorInstantiator.instantiate()
         if (!processors)
             return
@@ -48,6 +52,8 @@ class TransformerDelegate implements Disposable {
                         "$all.message "
             }
         }
+        if (doLast)
+            doLast(classesSet)
     }
 
     @Override
@@ -57,5 +63,9 @@ class TransformerDelegate implements Disposable {
 
     void log(String message) {
         logger.info(message)
+    }
+
+    public interface Listener {
+        void doLast(Set<CtClass> allClasses)
     }
 }

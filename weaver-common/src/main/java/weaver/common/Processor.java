@@ -39,6 +39,10 @@ public interface Processor {
     Scope getScope();
 
     /**
+     * Call this method to store manipulated class otherwise your source will not take effect.
+     * <p>
+     * Note: No need to call this method, if you are using android transform API.
+     *
      * @param candidateClass Given {@link CtClass}.
      * @return Returns true, if writes successfully the <code>CtClass</code> in the proper directory
      * otherwise returns false.

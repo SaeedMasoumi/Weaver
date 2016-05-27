@@ -1,6 +1,7 @@
 package weaver.test
 
 import com.google.common.collect.ImmutableSet
+import javassist.CtClass
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -12,6 +13,7 @@ import weaver.plugin.transform.TransformerDelegate
 
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
+import static org.junit.Assert.assertTrue
 import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 
 /**
@@ -57,7 +59,12 @@ class TransformerDelegateTest {
     @Test
     void "test"() {
         TransformerDelegate pi = new TransformerDelegate(bundle)
-        pi.execute()
+        boolean doLastCalled = false
+        pi.execute() { Set<CtClass> allClasses ->
+            allClasses.each { println it.name }
+            doLastCalled = true
+        }
+        assertTrue(doLastCalled)
         def urls = []
         urls += normalizeDirectoryForClassLoader(bundle.getOutputDir())
         ClassLoader cl = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)

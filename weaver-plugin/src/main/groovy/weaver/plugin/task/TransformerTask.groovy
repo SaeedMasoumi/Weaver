@@ -79,7 +79,7 @@ class TransformerTask extends DefaultTask {
         if (classesDir)
             urls += normalizeDirectoryForClassLoader(classesDir)
         URLClassLoader classLoader = new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
-        return classLoader
+        classLoader
     }
 
     WeaverClassPool createPool(ClassLoader parentClassLoader) {

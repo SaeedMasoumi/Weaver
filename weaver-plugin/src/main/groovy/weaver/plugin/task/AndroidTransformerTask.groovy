@@ -4,7 +4,9 @@ import com.android.SdkConstants
 import com.android.build.api.transform.*
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
+import com.google.common.io.Files
 import groovy.io.FileType
+import javassist.CtClass
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import weaver.plugin.WeaverPlugin
@@ -62,10 +64,19 @@ public class AndroidTransformerTask extends Transform {
         TransformBundle bundle = createTransformBundle(transformInvocation)
         TransformerDelegate transformer = new TransformerDelegate(bundle)
         try {
-            transformer.execute()
+            def doLast = {
+                Set<CtClass> allClasses ->
+                    def path = getOutputFile(transformInvocation.outputProvider).canonicalPath
+                    allClasses.each {
+                        it.writeFile(path)
+                    }
+                    log "All classes copied into $path"
+            }
+            transformer.execute(doLast)
         } catch (all) {
             log "an error occurred during transformation [ $all.message ] "
         }
+        copyResourceFiles(transformInvocation.inputs, transformInvocation.outputProvider)
         transformer.dispose()
         bundle.dispose()
         log "ClassPool and ClassLoaders are disposed successfully"
@@ -100,7 +111,7 @@ public class AndroidTransformerTask extends Transform {
         project.android.bootClasspath.each {
             String path = it.absolutePath
             urls += project.file(path).toURI().toURL()
-            log "Add android boot class [$path] to root class loader."
+            log "Add android boot class [$path] to class loader."
         }
         return new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
     }
@@ -109,6 +120,7 @@ public class AndroidTransformerTask extends Transform {
     void appendBootClassPath(WeaverClassPool classPool) {
         project.android.bootClasspath.each {
             classPool.appendClassPath(it as File)
+            log "Add android boot class [$it] to class pool."
         }
     }
 
@@ -180,7 +192,31 @@ public class AndroidTransformerTask extends Transform {
                 'weaver', getInputTypes(), getScopes(), Format.DIRECTORY)
     }
 
+    /**
+     * Copies all non-class files.
+     * @param inputs
+     * @param outputProvider
+     * @return
+     */
+    private copyResourceFiles(Collection<TransformInput> inputs, TransformOutputProvider outputProvider) {
+        inputs.each {
+            it.directoryInputs.each {
+                def dirPath = it.file.absolutePath
+                it.file.eachFileRecurse(FileType.FILES) {
+                    if (!it.absolutePath.endsWith(SdkConstants.DOT_CLASS)) {
+                        log "Copying resource ${it}"
+                        def dest = new File(getOutputFile(outputProvider),
+                                it.absolutePath.substring(dirPath.length()))
+                        dest.parentFile.mkdirs()
+                        Files.copy(it, dest)
+                    }
+                }
+            }
+            // no need to implement the code for `it.jarInputs.each` since PROJECT SCOPE does not use jar input.
+        }
+    }
+
     void log(String message) {
-        logger.info message
+        logger.info "[Weaver] $message"
     }
 }
