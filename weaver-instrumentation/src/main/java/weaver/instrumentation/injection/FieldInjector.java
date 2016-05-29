@@ -56,6 +56,7 @@ public class FieldInjector extends BaseInjector<ClassInjector> {
     public ClassInjector inject() throws Exception {
         CtClass fieldType = getPool().get(fieldTypeQualifiedName);
         CtClass ctClass = getCtClass();
+        //TODO skip if field already exists
         CtField field = new CtField(fieldType, fieldName, ctClass);
         field.setModifiers(modifiers);
         if (!instantiateValue.isEmpty()) {
