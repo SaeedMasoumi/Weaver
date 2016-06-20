@@ -19,7 +19,7 @@ class WeaverPluginAndroid implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        applyLegacyTransformerTasks project
+        applyTransformAPI project
     }
 
     static void applyTransformAPI(Project project) {

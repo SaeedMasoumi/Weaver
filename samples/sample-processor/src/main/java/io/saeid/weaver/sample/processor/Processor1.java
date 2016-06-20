@@ -33,4 +33,9 @@ public class Processor1 extends WeaverProcessor {
             writeClass(ctClass);
         }
     }
+
+    @Override
+    public String getName() {
+        return "Processor1";
+    }
 }

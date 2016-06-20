@@ -1,4 +1,4 @@
-package weaver.plugin.transform
+package weaver.plugin.task
 
 import javassist.CtClass
 import org.gradle.api.logging.Logger
@@ -9,17 +9,17 @@ import weaver.plugin.processor.WeaveEnvironmentImp
 import weaver.plugin.util.Disposable
 
 /**
- * <code>TransformerDelegate</code> is a delegate for all transformer tasks and it's responsible to instantiate and call processors.
+ * <code>WeaverExec</code> is a delegate for all transformer tasks and it's responsible to instantiate and call processors.
  *
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class TransformerDelegate implements Disposable {
+class WeaverExec implements Disposable {
 
     TransformBundle bundle
     ProcessorInstantiator processorInstantiator
     Logger logger
 
-    TransformerDelegate(TransformBundle bundle) {
+    WeaverExec(TransformBundle bundle) {
         this.bundle = bundle
         this.logger = bundle.project.logger
         processorInstantiator = new ProcessorInstantiator(bundle)
@@ -31,8 +31,6 @@ class TransformerDelegate implements Disposable {
 
     void execute(doLast) {
         def processors = processorInstantiator.instantiate()
-        if (!processors)
-            return
         def pool = bundle.classPool
         WeaveEnvironment env = new WeaveEnvironmentImp(logger, bundle.classPool, bundle.outputDir)
         processors.each {
@@ -43,6 +41,7 @@ class TransformerDelegate implements Disposable {
         classFiles.each {
             classesSet.add(pool.get(it))
         }
+        log "${classesSet.size()} class files have been found."
         processors.each {
             try {
                 it.transform(classesSet)

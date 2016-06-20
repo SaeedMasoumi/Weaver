@@ -15,4 +15,9 @@ public class Processor2 extends WeaverProcessor {
     public void transform(Set<? extends CtClass> candidateClasses) throws Exception {
 
     }
+
+    @Override
+    public String getName() {
+        return "Processor2";
+    }
 }

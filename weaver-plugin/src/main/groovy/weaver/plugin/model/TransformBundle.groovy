@@ -6,7 +6,7 @@ import weaver.plugin.javassist.WeaverClassPool
 import weaver.plugin.util.Disposable
 
 /**
- * All needed data to instantiate processors and transform classes, {@link weaver.plugin.transform.TransformerDelegate}
+ * All needed data to instantiate processors and transform classes, {@link weaver.plugin.task.WeaverExec}
  * needs this bundle to be task independent.
  *
  * @author Saeed Masoumi (saeed@6thsolution.com)

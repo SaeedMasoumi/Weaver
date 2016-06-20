@@ -9,7 +9,7 @@ import org.junit.Test
 import weaver.plugin.javassist.WeaverClassPool
 import weaver.plugin.model.TransformBundle
 import weaver.plugin.model.TransformBundleImp
-import weaver.plugin.transform.TransformerDelegate
+import weaver.plugin.task.WeaverExec
 
 import static org.hamcrest.CoreMatchers.instanceOf
 import static org.junit.Assert.assertThat
@@ -19,7 +19,7 @@ import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 /**
  * @author Saeed Masoumi (saeed@6thsolution.com)
  */
-class TransformerDelegateTest {
+class WeaverExecTest {
     TransformBundle bundle
     Project project
 
@@ -58,7 +58,7 @@ class TransformerDelegateTest {
 
     @Test
     void "test"() {
-        TransformerDelegate pi = new TransformerDelegate(bundle)
+        WeaverExec pi = new WeaverExec(bundle)
         boolean doLastCalled = false
         pi.execute() { Set<CtClass> allClasses ->
             allClasses.each { println it.name }

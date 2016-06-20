@@ -13,7 +13,6 @@ import weaver.plugin.WeaverPlugin
 import weaver.plugin.javassist.WeaverClassPool
 import weaver.plugin.model.TransformBundle
 import weaver.plugin.model.TransformBundleImp
-import weaver.plugin.transform.TransformerDelegate
 
 import java.util.jar.JarFile
 
@@ -35,7 +34,7 @@ public class AndroidTransformerTask extends Transform {
 
     @Override
     String getName() {
-        return "Weaver"
+        return "weaver"
     }
 
     @Override
@@ -50,8 +49,11 @@ public class AndroidTransformerTask extends Transform {
 
     @Override
     Set<Scope> getReferencedScopes() {
-        return Sets.immutableEnumSet(Scope.EXTERNAL_LIBRARIES, Scope.PROJECT_LOCAL_DEPS,
-                Scope.SUB_PROJECTS, Scope.SUB_PROJECTS_LOCAL_DEPS)
+        return Sets.immutableEnumSet(Scope.EXTERNAL_LIBRARIES,
+                Scope.PROJECT_LOCAL_DEPS,
+                Scope.SUB_PROJECTS,
+                Scope.SUB_PROJECTS_LOCAL_DEPS,
+                Scope.TESTED_CODE)
     }
 
     @Override
@@ -62,7 +64,7 @@ public class AndroidTransformerTask extends Transform {
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         TransformBundle bundle = createTransformBundle(transformInvocation)
-        TransformerDelegate transformer = new TransformerDelegate(bundle)
+        WeaverExec weaverExec = new WeaverExec(bundle)
         try {
             def doLast = {
                 Set<CtClass> allClasses ->
@@ -72,12 +74,12 @@ public class AndroidTransformerTask extends Transform {
                     }
                     log "All classes copied into $path"
             }
-            transformer.execute(doLast)
+            weaverExec.execute(doLast)
         } catch (all) {
             log "an error occurred during transformation [ $all.message ] "
         }
         copyResourceFiles(transformInvocation.inputs, transformInvocation.outputProvider)
-        transformer.dispose()
+        weaverExec.dispose()
         bundle.dispose()
         log "ClassPool and ClassLoaders are disposed successfully"
     }
@@ -92,7 +94,7 @@ public class AndroidTransformerTask extends Transform {
                 .rootClassLoader(rootClassLoader)
                 .classPool(pool)
                 .classFiles(getClassFiles(transformInvocation.inputs))
-                .outputDir(getOutputFile(transformInvocation.outputProvider))
+                .outputDir(getSecondaryOutputFile())
                 .build()
         return bundle
     }
@@ -111,7 +113,7 @@ public class AndroidTransformerTask extends Transform {
         project.android.bootClasspath.each {
             String path = it.absolutePath
             urls += project.file(path).toURI().toURL()
-            log "Add android boot class [$path] to class loader."
+            log "Add android boot class [$path] to the weaver class loader."
         }
         return new URLClassLoader(urls as URL[], Thread.currentThread().contextClassLoader)
     }
@@ -120,7 +122,7 @@ public class AndroidTransformerTask extends Transform {
     void appendBootClassPath(WeaverClassPool classPool) {
         project.android.bootClasspath.each {
             classPool.appendClassPath(it as File)
-            log "Add android boot class [$it] to class pool."
+            log "Add android boot class [$it] to the weaver class pool."
         }
     }
 
@@ -190,6 +192,10 @@ public class AndroidTransformerTask extends Transform {
     private File getOutputFile(TransformOutputProvider outputProvider) {
         return outputProvider.getContentLocation(
                 'weaver', getInputTypes(), getScopes(), Format.DIRECTORY)
+    }
+
+    private File getSecondaryOutputFile() {
+        return project.file("$project.buildDir/weaver/")
     }
 
     /**

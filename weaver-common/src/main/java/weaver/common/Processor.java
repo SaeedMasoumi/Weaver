@@ -39,6 +39,11 @@ public interface Processor {
     Scope getScope();
 
     /**
+     * @return
+     */
+    String getName();
+
+    /**
      * Call this method to store manipulated class otherwise your source will not take effect.
      * <p>
      * Note: No need to call this method, if you are using android transform API.

@@ -8,7 +8,6 @@ import org.gradle.api.tasks.TaskAction
 import weaver.plugin.javassist.WeaverClassPool
 import weaver.plugin.model.TransformBundle
 import weaver.plugin.model.TransformBundleImp
-import weaver.plugin.transform.TransformerDelegate
 
 import static weaver.plugin.util.UrlUtils.normalizeDirectoryForClassLoader
 
@@ -38,7 +37,7 @@ class TransformerTask extends DefaultTask {
         int time = System.currentTimeMillis()
 
         TransformBundle bundle = createTransformBundle()
-        TransformerDelegate transformer = new TransformerDelegate(bundle)
+        WeaverExec transformer = new WeaverExec(bundle)
         try {
             transformer.execute()
         } catch (all) {
