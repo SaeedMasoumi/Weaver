@@ -21,11 +21,19 @@ subprojects { subproj ->
         repositories {
             mavenCentral()
             jcenter()
+            maven {
+                url 'https://maven.google.com'
+            }
+
         }
     }
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
+
     }
 
     apply from: rootProject.file('gradle/dependencies.gradle')
